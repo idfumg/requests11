@@ -3,7 +3,7 @@
 #include "service.h"
 #include "response.h"
 
-namespace requests {
+namespace crequests {
 
 
     namespace {
@@ -581,4 +581,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

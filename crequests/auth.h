@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-namespace requests {
+namespace crequests {
 
     using pair_t = std::pair<string_t, string_t>;
 
@@ -18,6 +18,6 @@ namespace requests {
     std::ostream& operator<<(std::ostream& out, const auth_t& auth);
     auth_t operator "" _auth(const char* val, size_t);
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* AUTH_H */

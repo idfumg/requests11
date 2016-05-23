@@ -19,7 +19,7 @@ namespace boost {
     }
 }
 
-namespace requests {
+namespace crequests {
 
     template <class... Args>
     using shared_ptr_t = std::shared_ptr<Args...>;
@@ -31,6 +31,6 @@ namespace requests {
         boost::asio::ip::basic_resolver_iterator<boost::asio::ip::tcp>;
 
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* BOOST_ASIO_TYPES_H */

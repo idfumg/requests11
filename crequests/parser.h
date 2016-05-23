@@ -5,7 +5,7 @@
 #include <string>
 #include <functional>
 
-namespace requests {
+namespace crequests {
 
     
     using cb_data_t = std::function<void(const char* at, size_t length)>;
@@ -74,6 +74,6 @@ namespace requests {
     };
 
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* PARSER_H */

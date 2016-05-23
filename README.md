@@ -11,7 +11,7 @@ You can do simple ordinary requests like this:
 
 <pre><code>
 int main() {
-    using namespace requests;
+    using namespace crequests;
     service_t service;
     auto response = Get(service, "http://yandex.ru");
     std::cout << reponse->content() << std::endl;
@@ -25,7 +25,7 @@ Which is printed content of downloaded web page.
 Also, you have a full control on result of request operation:
 
 <pre><code>
-using namespace requests;
+using namespace crequests;
 service_t service;
 auto response = Get(service, "http://yandex.ru");
 if (response.error()) {
@@ -41,7 +41,7 @@ if (response.error()) {
 If you want to save intermediate data between requests like cookies, you can use session mechanism:
 
 <pre><code>
-using namespace requests;
+using namespace crequests;
 service_t service;
 auto session = service.new_sesion("http://yandex.ru", timeout_t{10});
 {
@@ -61,7 +61,7 @@ Ordinary HTTP os HTTPS protocol will be choosen from a given uri. Also you can i
 set it by sending parameters to api functions.
 
 <pre><code>
-using namespace requests;
+using namespace crequests;
 static const std::vector<std::string> urls = {
     "http://google.ru",
     "http://httpbin.org",
@@ -89,7 +89,7 @@ All received responses will be saved for a dispose_timeout interval. After timeo
 So you can get a response when you want and adjust settings as you want.
 
 <pre><code>
-using namespace requests;
+using namespace crequests;
 service_t service{dispose_timeout_t{10}};
 auto callback = [](const response_t& response) {
     // do the work

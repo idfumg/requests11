@@ -14,7 +14,7 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/algorithm/string.hpp>
 
-namespace requests {
+namespace crequests {
 
 
     bool is_url_encoded(const string_t& value) {
@@ -201,4 +201,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

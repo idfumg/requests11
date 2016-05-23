@@ -4,7 +4,7 @@
 #include "types.h"
 #include <sstream>
 
-namespace requests {
+namespace crequests {
 
     bool is_url_encoded(const string_t& value);
     string_t urlencode(const string_t& value);
@@ -23,6 +23,6 @@ namespace requests {
     std::time_t now_gmt();
     std::time_t max_time();
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* UTILS_H */

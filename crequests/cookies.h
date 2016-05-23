@@ -4,7 +4,7 @@
 #include "types.h"
 #include <set>
 
-namespace requests {
+namespace crequests {
 
 
     class cookie_t {
@@ -101,6 +101,6 @@ namespace requests {
     cookie_t operator "" _cookie(const char* val, size_t);
 
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* COOKIES_H */

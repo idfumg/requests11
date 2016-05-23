@@ -8,7 +8,7 @@
 #include "auth.h"
 #include "cookies.h"
 
-namespace requests {
+namespace crequests {
 
 
     declare_string(method);
@@ -129,6 +129,6 @@ namespace requests {
     std::ostream& operator<<(std::ostream& out, const request_t& request);
 
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* REQUEST_H */

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-namespace requests {
+namespace crequests {
 
     class params_t : public unordered_map {
         using unordered_map::unordered_map;
@@ -17,6 +17,6 @@ namespace requests {
     std::ostream& operator<<(std::ostream& out, const params_t& params);
     params_t operator "" _params(const char* val, size_t);
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* PARAMS_H */

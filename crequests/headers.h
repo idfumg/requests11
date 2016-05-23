@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-namespace requests {
+namespace crequests {
 
     using cookie_map = std::unordered_multimap<string_t, string_t, ihash, iequals>;
 
@@ -22,6 +22,6 @@ namespace requests {
     std::ostream& operator<<(std::ostream& out, const headers_t& headers);
     headers_t operator "" _headers(const char* val, size_t);
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* HEADER_H */

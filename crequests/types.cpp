@@ -3,7 +3,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace requests {
+namespace crequests {
 
     std::size_t iequals::operator()(const string_t& key1,
                                     const string_t& key2) const {
@@ -33,4 +33,4 @@ namespace requests {
         return seed;
     }
 
-} /* namespace requests */
+} /* namespace crequests */

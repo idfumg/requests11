@@ -1,7 +1,7 @@
 #include "auth.h"
 #include <ostream>
 
-namespace requests {
+namespace crequests {
 
 
     auth_t auth_t::from_string(const string_t& str) {
@@ -30,4 +30,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

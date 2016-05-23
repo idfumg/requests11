@@ -4,7 +4,7 @@
 #include "types.h"
 #include <vector>
 
-namespace requests {
+namespace crequests {
 
 
     class redirects_t : public std::vector<response_t> {
@@ -18,6 +18,6 @@ namespace requests {
     std::ostream& operator<<(std::ostream& out, const redirects_t& redirects);
 
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* REDIRECTS_H */

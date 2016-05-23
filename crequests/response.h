@@ -8,7 +8,7 @@
 #include "redirects.h"
 #include "cookies.h"
 
-namespace requests {
+namespace crequests {
 
     declare_number(http_major, unsigned short);
     declare_number(http_minor, unsigned short);
@@ -85,6 +85,6 @@ namespace requests {
 
     std::ostream& operator<<(std::ostream& out, const response_t& response);
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* RESPONSE_H */

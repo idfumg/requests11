@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace requests {
+namespace crequests {
 
 
     params_t params_t::from_string(const string_t& str) {
@@ -57,4 +57,4 @@ namespace requests {
     }
 
     
-} /* namespace requests */
+} /* namespace crequests */

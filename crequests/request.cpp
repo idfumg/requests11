@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace requests {
+namespace crequests {
 
 
     request_t::request_t() {
@@ -406,4 +406,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

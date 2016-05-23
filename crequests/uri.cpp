@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace requests {
+namespace crequests {
 
 
     class uri_parser_t {
@@ -469,4 +469,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

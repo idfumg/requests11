@@ -1,7 +1,7 @@
 #include "response.h"
 #include "utils.h"
 
-namespace requests {
+namespace crequests {
 
 
     response_t::response_t(const request_t& request)
@@ -261,4 +261,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

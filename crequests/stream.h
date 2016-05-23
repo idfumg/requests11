@@ -3,7 +3,7 @@
 
 #include "boost_asio.h"
 
-namespace requests {
+namespace crequests {
     
     template <class ServiceT>
     static inline ssl_socket_ptr_t create_ssl_socket(ServiceT&& service, bool is_server) {
@@ -191,6 +191,6 @@ namespace requests {
         boost::asio::ssl::stream_base::handshake_type type;
     };
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* SOCKET_H */

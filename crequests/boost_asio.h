@@ -7,7 +7,7 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/asio/steady_timer.hpp>
 
-namespace requests {
+namespace crequests {
     
     using tcp_socket_t = boost::asio::ip::tcp::socket;
     using tcp_socket_ptr_t = shared_ptr_t<tcp_socket_t>;
@@ -23,6 +23,6 @@ namespace requests {
     using timer_ptr_t = shared_ptr_t<timer__t>;
     using strand_t = boost::asio::io_service::strand;
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* BOOST_ASIO_H */

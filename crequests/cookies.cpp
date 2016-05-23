@@ -7,7 +7,7 @@
 #include <map>
 #include <string.h>
 
-namespace requests {
+namespace crequests {
 
 
     /************************************************************
@@ -523,4 +523,4 @@ namespace requests {
     }
     
     
-} /* namespace requests */
+} /* namespace crequests */

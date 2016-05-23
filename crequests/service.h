@@ -6,7 +6,7 @@
 #include "session.h"
 #include "boost_asio_fwd.h"
 
-namespace requests {
+namespace crequests {
 
     declare_number(dispose_timeout, size_t);
 
@@ -34,6 +34,6 @@ namespace requests {
         shared_ptr_t<service_data_t> data;
     };
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* SERVICE_H */

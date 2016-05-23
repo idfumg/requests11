@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "auth.h"
 
-namespace requests {
+namespace crequests {
 
     class session_t {
     public:
@@ -81,6 +81,6 @@ namespace requests {
 
     using session_ptr_t = shared_ptr_t<session_t>;
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* SESSION_H */

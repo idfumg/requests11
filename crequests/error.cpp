@@ -1,6 +1,6 @@
 #include "error.h"
 
-namespace requests {
+namespace crequests {
 
 
     string_t error_code_to_string(const error_code_t& code) {
@@ -94,4 +94,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

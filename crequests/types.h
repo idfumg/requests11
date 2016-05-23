@@ -10,7 +10,7 @@
 
 #include <boost/optional.hpp>
 
-namespace requests {
+namespace crequests {
 
     using string_t = std::string;
     template <class T>

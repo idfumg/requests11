@@ -2,7 +2,7 @@
 #include "response.h"
 #include <ostream>
 
-namespace requests {
+namespace crequests {
 
 
     void redirects_t::add(const response_t& response) {
@@ -28,4 +28,4 @@ namespace requests {
     }
 
     
-} /* namespace requests */
+} /* namespace crequests */

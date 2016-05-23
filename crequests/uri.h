@@ -4,7 +4,7 @@
 #include "macros.h"
 #include "params.h"
 
-namespace requests {
+namespace crequests {
 
 
     declare_string(url);
@@ -85,6 +85,6 @@ namespace requests {
     uri_t operator "" _uri(const char* val, size_t);
 
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* URI_H */

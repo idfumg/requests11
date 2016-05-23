@@ -4,7 +4,7 @@
 #include <sstream>
 #include <ostream>
 
-namespace requests {
+namespace crequests {
 
 
     headers_t headers_t::from_string(const string_t& str) {
@@ -78,4 +78,4 @@ namespace requests {
     }
 
     
-} /* namespace requests */
+} /* namespace crequests */

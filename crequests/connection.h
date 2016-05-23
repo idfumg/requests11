@@ -5,7 +5,7 @@
 #include "error.h"
 #include "boost_asio_fwd.h"
 
-namespace requests {
+namespace crequests {
 
     class service_t;
 
@@ -33,6 +33,6 @@ namespace requests {
 
     using connection_ptr_t = shared_ptr_t<connection_t>;
 
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* CONNECTION_H */

@@ -5,7 +5,7 @@
 #include "service.h"
 #include "session.h"
 
-namespace requests {
+namespace crequests {
 
 
     template <class SessionT, class Head>
@@ -103,6 +103,6 @@ namespace requests {
         return session->AsyncHead();
     }
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* API_H */

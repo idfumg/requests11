@@ -6,7 +6,7 @@
 #include <thread>
 #include <list>
 
-namespace requests {
+namespace crequests {
 
 
     namespace {
@@ -146,4 +146,4 @@ namespace requests {
     }
 
 
-} /* namespace requests */
+} /* namespace crequests */

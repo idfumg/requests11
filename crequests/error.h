@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-namespace requests {
+namespace crequests {
 
     enum error_code_t {
         INIT,
@@ -58,6 +58,6 @@ namespace requests {
 
     std::ostream& operator<<(std::ostream& out, const error_t& error);
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* ERROR_H */
