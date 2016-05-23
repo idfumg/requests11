@@ -108,3 +108,7 @@ TODO:
 1. User defined SSL certificates.
 2. Iterative content dowload.
 3. File upload.
+
+Thanks to:
+https://github.com/kennethreitz/requests
+https://github.com/whoshuu/cpr
