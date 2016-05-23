@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Auth, ToString) {
     auto auth = auth_t{"hellow", "world"};

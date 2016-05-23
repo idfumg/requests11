@@ -5,7 +5,7 @@
 #include <thread>
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(ConnectionBad,  ResolveError) {
     service_t service;

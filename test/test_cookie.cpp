@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Cookie, Default) {
     auto cookie = "some=cookie; "_cookie;

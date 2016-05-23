@@ -5,7 +5,7 @@
 #include "../crequests/headers.h"
 #include "../crequests/request.h"
 
-namespace requests {
+namespace crequests {
 
     namespace {
 
@@ -616,4 +616,4 @@ namespace requests {
             stream->socket<ssl_socket_t::lowest_layer_type>(), callback);
     }
 
-} /* namespace requests */
+} /* namespace crequests */

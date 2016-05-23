@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Redirects, PrepareDefaultAndFindRequest) {
     redirects_t redirects;

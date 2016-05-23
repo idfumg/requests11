@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include "../crequests/boost_asio_fwd.h"
 
-namespace requests {
+namespace crequests {
 
     class server_t {
     public:
@@ -24,6 +24,6 @@ namespace requests {
         bool is_ssl;
     };
     
-} /* namespace requests */
+} /* namespace crequests */
 
 #endif /* SERVER_H */

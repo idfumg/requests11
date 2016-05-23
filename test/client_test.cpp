@@ -9,7 +9,7 @@ void print(T&& value) {
 }
 
 int main(int argc, char** argv) {
-    using namespace requests;
+    using namespace crequests;
 
     if (REAL_TEST) {
         static const std::vector<std::string> urls = {

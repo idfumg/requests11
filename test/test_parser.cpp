@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Parser, StatusAcquire) {
     parser_t parser(parser_t::parser_type_t::RESPONSE);

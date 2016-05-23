@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Api, Default) {
     server_t server{"127.0.0.1", "8080"};

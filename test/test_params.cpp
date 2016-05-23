@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 using namespace testing;
-using namespace requests;
+using namespace crequests;
 
 TEST(Params, FromString) {
     auto params = params_t::from_string("a=1&b=2&c=3&d=4");
