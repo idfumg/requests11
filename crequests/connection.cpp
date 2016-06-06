@@ -250,6 +250,11 @@ namespace crequests {
     }
 
     void conn_impl_t::prepare_parser() {
+        raw = ""_raw;
+        header_field = "";
+        content_length = 0;
+        headers = ""_headers;
+
         auto status_fn = [this](const char* at,
                                 size_t length,
                                 unsigned short major,
