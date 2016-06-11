@@ -45,7 +45,7 @@ namespace crequests {
         string_t read_buffer(StreamBufT& response_buf, std::size_t length) {
             if (length == 0)
                 return "";
-            std::vector<char> buf(length);
+            vector_t<char> buf(length);
             response_buf.sgetn(&buf[0], length);
 
             return string_t(buf.begin(), buf.end());
@@ -198,7 +198,11 @@ namespace crequests {
     conn_impl_t::conn_impl_t(service_t& service, const request_t& request)
         : service(service),
           strand(service.get_service()),
-          stream(service.get_service(), request.is_ssl()),
+          stream(service.get_service(),
+                 request.is_ssl(),
+                 false,
+                 request.ssl_auth(),
+                 request.ssl_certs()),
           resolver(service.get_service()),
           timeout_timer(service.get_service()),
           dispose_timer(service.get_service()),
@@ -335,7 +339,11 @@ namespace crequests {
 
     void conn_impl_t::restart() {
         stream.cancel();
-        stream = stream_t(service.get_service(), response->request().is_ssl());
+        stream = stream_t(service.get_service(),
+                          response->request().is_ssl(),
+                          false,
+                          response->request().ssl_auth(),
+                          response->request().ssl_certs());
         parser = std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE);
         m_is_reused = false;
         start();
@@ -727,7 +735,11 @@ namespace crequests {
         redirects.add(*response);
         response->redirects(std::move(redirects));
 
-        stream = stream_t(service.get_service(), response->request().is_ssl());
+        stream = stream_t(service.get_service(),
+                          response->request().is_ssl(),
+                          false,
+                          response->request().ssl_auth(),
+                          response->request().ssl_certs());
 
         if (request_buf.size() > 0)
             request_buf.consume(request_buf.size());

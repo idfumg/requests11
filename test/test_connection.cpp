@@ -176,7 +176,7 @@ TEST(ConnectionGood,  GetBigChunks) {
     auto response = Get(service, "127.0.0.1:8080/get_big_chunks").get();
 
     EXPECT_EQ(response->error().code(), error_code_t::SUCCESS);
-    EXPECT_EQ(response->raw().value(), std::string(1500, 's'));
+    EXPECT_EQ(response->raw().value(), string_t(1500, 's'));
 
     server.stop();
     thread.join();

@@ -27,7 +27,8 @@ namespace crequests {
           m_error {response.m_error},
           m_redirect_count {response.m_redirect_count},
           m_content {response.m_content},
-          m_redirects {response.m_redirects}
+          m_redirects {response.m_redirects},
+          m_cookies {response.m_cookies}
     {
         
     }
@@ -43,7 +44,8 @@ namespace crequests {
           m_error {std::move(response.m_error)},
           m_redirect_count {std::move(response.m_redirect_count)},
           m_content {std::move(response.m_content)},
-          m_redirects {std::move(response.m_redirects)}
+          m_redirects {std::move(response.m_redirects)},
+          m_cookies {std::move(response.m_cookies)}
     {
         
     }
@@ -61,6 +63,7 @@ namespace crequests {
             m_redirect_count = response.m_redirect_count;
             m_content = response.m_content;
             m_redirects = response.m_redirects;
+            m_cookies = response.m_cookies;
         }
 
         return *this;
@@ -120,6 +123,10 @@ namespace crequests {
         m_redirects = redirects;
     }
 
+    void response_t::cookies(const cookies_t& cookies) {
+        m_cookies = cookies;
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -168,6 +175,10 @@ namespace crequests {
 
     void response_t::redirects(redirects_t&& redirects) {
         m_redirects = std::move(redirects);
+    }
+
+    void response_t::cookies(cookies_t&& cookies) {
+        m_cookies = std::move(cookies);
     }
 
 
@@ -227,6 +238,9 @@ namespace crequests {
         return m_redirects;
     }
 
+    const cookies_t& response_t::cookies() const {
+        return m_cookies;
+    }
 
     request_t& response_t::request() {
         return m_request;

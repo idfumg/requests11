@@ -50,6 +50,10 @@ namespace crequests {
         void set_option(const data_t& data);
         void set_option(const auth_t& auth);
         void set_option(const keep_alive_t& keep_alive);
+        void set_option(const cache_redirects_t& cache_redirects);
+        void set_option(const cookies_t& cookies);
+        void set_option(const ssl_auth_t& ssl_auth);
+        void set_option(const ssl_certs_t& ssl_certs);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -70,6 +74,10 @@ namespace crequests {
         void set_option(data_t&& data);
         void set_option(auth_t&& auth);
         void set_option(keep_alive_t&& keep_alive);
+        void set_option(cache_redirects_t&& cache_redirects);
+        void set_option(cookies_t&& cookies);
+        void set_option(ssl_auth_t&& ssl_auth);
+        void set_option(ssl_certs_t&& ssl_certs);
 
         bool is_expired() const;
         void skip_redirects(const response_t& response);
@@ -169,6 +177,22 @@ namespace crequests {
         request.keep_alive(keep_alive);
     }
 
+    void session_impl_t::set_option(const cache_redirects_t& cache_redirects) {
+        request.cache_redirects(cache_redirects);
+    }
+
+    void session_impl_t::set_option(const cookies_t& cookies) {
+        request.cookies(cookies);
+    }
+
+    void session_impl_t::set_option(const ssl_auth_t& ssl_auth) {
+        request.ssl_auth(ssl_auth);
+    }
+
+    void session_impl_t::set_option(const ssl_certs_t& ssl_certs) {
+        request.ssl_certs(ssl_certs);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -249,6 +273,22 @@ namespace crequests {
 
     void session_impl_t::set_option(keep_alive_t&& keep_alive) {
         request.keep_alive(std::move(keep_alive));
+    }
+
+    void session_impl_t::set_option(cache_redirects_t&& cache_redirects) {
+        request.cache_redirects(std::move(cache_redirects));
+    }
+
+    void session_impl_t::set_option(cookies_t&& cookies) {
+        request.cookies(std::move(cookies));
+    }
+
+    void session_impl_t::set_option(ssl_auth_t&& ssl_auth) {
+        request.ssl_auth(std::move(ssl_auth));
+    }
+
+    void session_impl_t::set_option(ssl_certs_t&& ssl_certs) {
+        request.ssl_certs(std::move(ssl_certs));
     }
 
 
@@ -414,6 +454,22 @@ namespace crequests {
         pimpl->set_option(keep_alive);
     }
 
+    void session_t::set_option(const cache_redirects_t& cache_redirects) {
+        pimpl->set_option(cache_redirects);
+    }
+
+    void session_t::set_option(const cookies_t& cookies) {
+        pimpl->set_option(cookies);
+    }
+
+    void session_t::set_option(const ssl_auth_t& ssl_auth) {
+        pimpl->set_option(ssl_auth);
+    }
+
+    void session_t::set_option(const ssl_certs_t& ssl_certs) {
+        pimpl->set_option(ssl_certs);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -494,6 +550,22 @@ namespace crequests {
 
     void session_t::set_option(keep_alive_t&& keep_alive) {
         pimpl->set_option(std::move(keep_alive));
+    }
+
+    void session_t::set_option(cache_redirects_t&& cache_redirects) {
+        pimpl->set_option(std::move(cache_redirects));
+    }
+
+    void session_t::set_option(cookies_t&& cookies) {
+        pimpl->set_option(std::move(cookies));
+    }
+
+    void session_t::set_option(ssl_auth_t&& ssl_auth) {
+        pimpl->set_option(std::move(ssl_auth));
+    }
+
+    void session_t::set_option(ssl_certs_t&& ssl_certs) {
+        pimpl->set_option(std::move(ssl_certs));
     }
 
 

@@ -5,7 +5,7 @@ using namespace testing;
 using namespace crequests;
 
 TEST(Auth, ToString) {
-    auto auth = auth_t{"hellow", "world"};
+    auto auth = auth_t{login_t{"hellow"}, password_t{"world"}};
     
     EXPECT_EQ(auth.to_string(), "hellow:world");
 }
@@ -13,11 +13,11 @@ TEST(Auth, ToString) {
 TEST(Auth, FromString) {
     auto auth = auth_t::from_string("hellow:world");
     
-    EXPECT_EQ(auth, (auth_t{"hellow", "world"}));
+    EXPECT_EQ(auth, (auth_t{login_t{"hellow"}, password_t{"world"}}));
 }
 
 TEST(Auth, FromStringUsingUserDefinedLiteral) {
     auto auth = "hellow:world"_auth;
     
-    EXPECT_EQ(auth, (auth_t{"hellow", "world"}));
+    EXPECT_EQ(auth, (auth_t{login_t{"hellow"}, password_t{"world"}}));
 }

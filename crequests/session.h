@@ -51,6 +51,10 @@ namespace crequests {
         void set_option(const data_t& data);
         void set_option(const auth_t& auth);
         void set_option(const keep_alive_t& keep_alive);
+        void set_option(const cache_redirects_t& cache_redirects);
+        void set_option(const cookies_t& cookies);
+        void set_option(const ssl_auth_t& ssl_auth);
+        void set_option(const ssl_certs_t& ssl_certs);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -71,6 +75,10 @@ namespace crequests {
         void set_option(data_t&& data);
         void set_option(auth_t&& auth);
         void set_option(keep_alive_t&& keep_alive);
+        void set_option(cache_redirects_t&& cache_redirects);
+        void set_option(cookies_t&& cookies);
+        void set_option(ssl_auth_t&& ssl_auth);
+        void set_option(ssl_certs_t&& ssl_certs);
 
         bool is_expired() const;
 

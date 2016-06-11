@@ -38,6 +38,7 @@ namespace crequests {
         void redirect_count(const redirect_count_t& redirect_count);
         void content(const content_t& content);
         void redirects(const redirects_t& redirects);
+        void cookies(const cookies_t& cookies);
 
         void request(request_t&& request);
         void http_major(http_major_t&& http_major);
@@ -50,6 +51,7 @@ namespace crequests {
         void redirect_count(redirect_count_t&& redirect_count);
         void content(content_t&& content);
         void redirects(redirects_t&& redirects);
+        void cookies(cookies_t&& cookies);
 
         const request_t& request() const;
         const http_major_t& http_major() const;
@@ -62,6 +64,7 @@ namespace crequests {
         const redirect_count_t& redirect_count() const;
         const content_t& content() const;
         const redirects_t& redirects() const;
+        const cookies_t& cookies() const;
 
         request_t& request();
         cookies_t& cookies();

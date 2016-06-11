@@ -102,12 +102,26 @@ KeepAlive and redirects is on by default.
 You can gzip you POST data on demand by using gzip_t{true} on api functions.
 
 response->raw() function return raw data received from the server.
-response->content() function return ungzipped data (if needed or raw data) automatically. 
+response->content() function return ungzipped data (if needed or raw data) automatically.
 
-TODO:
-1. User defined SSL certificates.
-2. Iterative content dowload.
-3. File upload.
+Working with ssl certificates:
+<pre><code>
+using namespace crequests;
+service_t service;
+auto response = Get(service, "https://some_url_with_basic_auth", "user:passwd"_auth);
+
+auto ssl_cert_key = ssl_auth_t {certificate_t{"asd"}, privatekey_t{"qwe"}};
+auto response = Get(service, "https://some_url_with_basic_auth", ssl_cert_key);
+
+auto ssl_certs = ssl_certs_t{certificate_t{"first"}, certificate_t{"second"}};
+auto response = Get(service, "https://some_url_with_basic_auth", ssl_certs);
+</code></pre>
+
+You can adjust request way you want using type_t parameters or user defined literals.
+<pre><code>
+auto response = Get(service, "https://some_url_with_basic_auth", "a=1&b=2"_params, "443"_port);
+</code></pre>
+All this parameters can be found in request.h.
 
 Thanks to:
 https://github.com/kennethreitz/requests

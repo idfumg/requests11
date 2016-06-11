@@ -9,19 +9,19 @@ namespace crequests {
         if (ind != string_t::npos)
             return
                 auth_t {
-                    str.substr(0, ind),
-                    str.substr(ind + 1)
+                    login_t{str.substr(0, ind)},
+                    password_t{str.substr(ind + 1)}
                 };
         
         throw std::runtime_error("unexpected auth_t str: " + str);
     }
     
-    string_t auth_t::to_string() {
-        return this->first + ":" + this->second;
+    string_t auth_t::to_string() const {
+        return this->first.value() + ":" + this->second.value();
     }
 
     std::ostream& operator<<(std::ostream& out, const auth_t& auth) {
-        out << "auth_t(" << auth.first << ", " << auth.second << ")";
+        out << "auth_t(" << auth.to_string() << ")";
         return out;
     }
 

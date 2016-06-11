@@ -91,7 +91,7 @@ TEST(Request, PrepareBasicAuthorization) {
     request.domain("google.com"_domain);
     request.url("google.com"_url);
     request.method("POST"_method);
-    request.auth(auth_t{"user", "passwd"});
+    request.auth(auth_t{login_t{"user"}, password_t{"passwd"}});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();

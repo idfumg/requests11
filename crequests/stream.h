@@ -2,15 +2,88 @@
 #define SOCKET_H
 
 #include "boost_asio.h"
+#include "ssl_auth.h"
+#include "ssl_certs.h"
+
+#include <openssl/bio.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
+#include <iostream>
 
 namespace crequests {
-    
+
+    static inline shared_ptr_t<BIO> NewStrBIO(const string_t& str) {
+        BIO* bio = BIO_new_mem_buf(const_cast<char*>(str.data()), (int)str.size());
+        if (bio == NULL)
+            throw std::runtime_error("BIO_new_mem_buf failed");
+        return shared_ptr_t<BIO>(bio, BIO_vfree);
+    }
+
+    static inline shared_ptr_t<X509> NewX509(const string_t& cert) {
+        auto cert_bio = NewStrBIO(cert);
+        X509* x509_cert = PEM_read_bio_X509(cert_bio.get(), NULL, NULL, NULL);
+        if (x509_cert == NULL)
+            throw std::runtime_error("create new X509 cert failed");
+        return shared_ptr_t<X509>(x509_cert, X509_free);
+    }
+
+    static inline shared_ptr_t<EVP_PKEY> NewEVP_PKEY(const string_t& pkey) {
+        auto pkey_bio = NewStrBIO(pkey);
+        EVP_PKEY* evp_pkey = ::PEM_read_bio_PrivateKey(pkey_bio.get(), NULL, NULL, NULL);
+        if (evp_pkey == NULL)
+            throw std::runtime_error("create new private key failed");
+        return shared_ptr_t<EVP_PKEY>(evp_pkey, EVP_PKEY_free);
+    }
+
+    static inline void UseCertAndKey(SSL_CTX* ctx, X509* cert, EVP_PKEY* pkey) {
+        if (!X509_check_private_key(cert, pkey))
+            throw std::runtime_error("private key mismatch cert certificate");
+
+        if (SSL_CTX_use_certificate(ctx, cert) != 1)
+            throw std::runtime_error("using certificate failed");
+
+        if (SSL_CTX_use_PrivateKey(ctx, pkey) != 1)
+            throw std::runtime_error("using private key failed");
+    }
+
+    static inline void UseCACerts(SSL_CTX* ctx,
+                                  const vector_t<shared_ptr_t<X509> >& certs) {
+        X509_STORE* x509_store = X509_STORE_new();
+        if (x509_store == NULL)
+            throw std::runtime_error("creating new X509 cert failed");
+
+        for (auto&& cert:  certs)
+            if (!X509_STORE_add_cert(x509_store, cert.get()))
+                throw std::runtime_error("add cert to X509 store failed");
+
+        SSL_CTX_set_cert_store(ctx, x509_store);
+    }
+
     template <class ServiceT>
-    static inline ssl_socket_ptr_t create_ssl_socket(ServiceT&& service, bool is_server) {
+    static inline ssl_socket_ptr_t create_ssl_socket(
+        ServiceT&& service,
+        bool is_server,
+        const shared_ptr_t<X509>& cert,
+        const shared_ptr_t<EVP_PKEY>& key,
+        const vector_t<shared_ptr_t<X509> >& certs) {
+
         if (not is_server) {
             boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
+            ctx.set_options(boost::asio::ssl::context::default_workarounds);
             ctx.set_verify_mode(boost::asio::ssl::verify_none);
             ctx.set_default_verify_paths();
+
+            if (cert and key) {
+                UseCertAndKey(ctx.impl(), cert.get(), key.get());
+                ctx.set_verify_mode(boost::asio::ssl::verify_peer);
+            }
+
+            if (not certs.empty()) {
+                UseCACerts(ctx.impl(), certs);
+                ctx.set_verify_mode(boost::asio::ssl::verify_peer);
+            }
+
             return std::make_shared<ssl_socket_t>(service, ctx);
         }
         else {
@@ -33,11 +106,23 @@ namespace crequests {
         template <class ServiceT>
         stream_t(ServiceT&& service,
                  bool is_ssl = false,
-                 bool is_server = false) {
+                 bool is_server = false,
+                 const ssl_auth_t& ssl_auth = ssl_auth_t(),
+                 const ssl_certs_t& ssl_certs = ssl_certs_t()) {
+            if (not ssl_auth.first.empty() and not ssl_auth.second.empty()) {
+                cert = NewX509(ssl_auth.first.value());
+                key = NewEVP_PKEY(ssl_auth.second.value());
+            }
+
+            if (not ssl_certs.empty())
+                for (auto&& cert : ssl_certs)
+                    certs.push_back(NewX509(cert.value()));
+
             if (is_ssl)
-                ssl_socket = create_ssl_socket(service, is_server);
+                ssl_socket = create_ssl_socket(service, is_server, cert, key, certs);
             else
                 tcp_socket = create_tcp_socket(service);
+
             if (is_server)
                 type = boost::asio::ssl::stream_base::server;
             else
@@ -189,6 +274,10 @@ namespace crequests {
         tcp_socket_ptr_t tcp_socket { nullptr };
         ssl_socket_ptr_t ssl_socket { nullptr };
         boost::asio::ssl::stream_base::handshake_type type;
+
+        shared_ptr_t<X509> cert;
+        shared_ptr_t<EVP_PKEY> key;
+        vector_t<shared_ptr_t<X509> > certs;
     };
 
 } /* namespace crequests */

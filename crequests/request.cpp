@@ -26,7 +26,9 @@ namespace crequests {
           m_final_callback {request.m_final_callback},
           m_auth {request.m_auth},
           m_cache_redirects {request.m_cache_redirects},
-          m_cookies {request.m_cookies}
+          m_cookies {request.m_cookies},
+          m_ssl_auth {request.m_ssl_auth},
+          m_ssl_certs {request.m_ssl_certs}
     {
         
     }
@@ -45,7 +47,9 @@ namespace crequests {
           m_final_callback {std::move(request.m_final_callback)},
           m_auth {std::move(request.m_auth)},
           m_cache_redirects {std::move(request.m_cache_redirects)},
-          m_cookies {std::move(request.m_cookies)}
+          m_cookies {std::move(request.m_cookies)},
+          m_ssl_auth {std::move(request.m_ssl_auth)},
+          m_ssl_certs {std::move(request.m_ssl_certs)}
     {
         
     }
@@ -66,6 +70,8 @@ namespace crequests {
             m_auth = request.m_auth;
             m_cache_redirects = request.m_cache_redirects;
             m_cookies = request.m_cookies;
+            m_ssl_auth = request.m_ssl_auth;
+            m_ssl_certs = request.m_ssl_certs;
         }
 
         return *this;
@@ -217,6 +223,14 @@ namespace crequests {
         m_cookies = cookies;
     }
 
+    void request_t::ssl_auth(const ssl_auth_t& ssl_auth) {
+        m_ssl_auth = ssl_auth;
+    }
+
+    void request_t::ssl_certs(const ssl_certs_t& ssl_certs) {
+        m_ssl_certs = ssl_certs;
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -273,6 +287,14 @@ namespace crequests {
 
     void request_t::cookies(cookies_t&& cookies) {
         m_cookies = std::move(cookies);
+    }
+
+    void request_t::ssl_auth(ssl_auth_t&& ssl_auth) {
+        m_ssl_auth = std::move(ssl_auth);
+    }
+
+    void request_t::ssl_certs(ssl_certs_t&& ssl_certs) {
+        m_ssl_certs = std::move(ssl_certs);
     }
 
 
@@ -335,6 +357,14 @@ namespace crequests {
 
     const cookies_t& request_t::cookies() const {
         return m_cookies;
+    }
+
+    const ssl_auth_t& request_t::ssl_auth() const {
+        return m_ssl_auth;
+    }
+
+    const ssl_certs_t& request_t::ssl_certs() const {
+        return m_ssl_certs;
     }
 
 

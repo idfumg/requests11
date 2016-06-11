@@ -3,13 +3,14 @@
 
 #include <boost/asio.hpp>
 #include "../crequests/boost_asio_fwd.h"
+#include "../crequests/types.h"
 
 namespace crequests {
 
     class server_t {
     public:
-        server_t(const std::string& address,
-                 const std::string& port,
+        server_t(const string_t& address,
+                 const string_t& port,
                  bool is_ssl = false);
         ~server_t();
 

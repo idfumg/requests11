@@ -1,169 +1,13 @@
 #include "uri.h"
 #include "types.h"
 #include "utils.h"
+#include "../external/http_parser/http_parser.h"
 
 #include <map>
 #include <sstream>
 #include <iostream>
 
 namespace crequests {
-
-
-    class uri_parser_t {
-    private:
-        enum state_t {
-            UPROTOCOL = 0,
-            UDOMAIN = 1,
-            UPORT = 2,
-            UPATH = 3,
-            UFRAGMENT = 4,
-            UQUERY = 5
-        };
-        
-    public:
-        uri_parser_t(const string_t& str) {
-            uri.url(url_t{str});
-            set_state(state_t::UPROTOCOL);
-        }
-
-        template <class IteratorT>
-        inline void parse_protocol(IteratorT& first,
-                                   IteratorT& cur,
-                                   IteratorT& last) {
-            if (cur != last and *cur == ':') {
-                uri.protocol(protocol_t{string_t{first, cur}});
-                
-                if (cur + 1 != last and *(cur + 1) == '/' and
-                    cur + 2 != last and *(cur + 2) == '/')
-                    cur = cur + 2;
-                
-                first = cur + 1;
-            }
-        }
-
-        template <class IteratorT>
-        inline void parse_domain(IteratorT& first, IteratorT& cur) {
-            uri.domain(domain_t{string_t{first, cur}});
-            first = cur;
-        }
-
-        template <class IteratorT>
-        inline void parse_port(IteratorT& first, IteratorT& cur) {
-            uri.port(port_t{string_t{first + 1, cur}});
-            first = cur;
-        }
-
-        template <class IteratorT>
-        inline void parse_path(IteratorT& first, IteratorT& cur) {
-            uri.path(path_t{string_t{first, cur}});
-            first = cur;
-        }
-
-        template <class IteratorT>
-        inline void parse_fragment(IteratorT& first, IteratorT& cur) {
-            uri.fragment(fragment_t{string_t{first + 1, cur}});
-            first = cur;
-        }
-
-        template <class IteratorT>
-        inline void parse_query(IteratorT& first, IteratorT& cur) {
-            uri.query(query_t{string_t{first + 1, cur}});
-            first = cur;
-        }
-
-        inline void set_state(const state_t state_) {
-            state = state_;
-        }
-        
-        uri_t parse() {
-            auto first = begin(uri.url().value());
-            auto cur = begin(uri.url().value());
-            auto last = end(uri.url().value());
-
-            while (cur != last) {
-                switch (*cur) {
-                case ':':
-                    if (state == state_t::UPROTOCOL)  {
-                        parse_protocol(first, cur, last);
-                        set_state(state_t::UDOMAIN);
-                    }
-                    else if (state == state_t::UDOMAIN) {
-                        parse_domain(first, cur);
-                        set_state(state_t::UPORT);
-                    }
-                    break;
-                    
-                case '.':
-                    set_state(state_t::UDOMAIN);
-                    break;
-
-                case '/':
-                    if (state == state_t::UDOMAIN)
-                        parse_domain(first, cur);
-                    else if (state == state_t::UPORT)
-                        parse_port(first, cur);
-                    else if (state == state_t::UQUERY)
-                        break;
-                    set_state(state_t::UPATH);
-                    break;
-
-                case '#':
-                    if (state == state_t::UPATH)
-                        parse_path(first, cur);
-                    set_state(state_t::UFRAGMENT);
-                    break;
-
-                case '?':
-                    if (state == state_t::UFRAGMENT)
-                        parse_fragment(first, cur);
-                    else if (state == state_t::UPATH)
-                        parse_path(first, cur);
-                    else if (state == state_t::UDOMAIN)
-                        parse_domain(first, cur);
-                    else if (state == state_t::UPORT)
-                        parse_port(first, cur);
-                    set_state(state_t::UQUERY);
-                    break;
-                };
-                cur++;
-            }
-
-            switch (state) {
-            case UPROTOCOL:
-                parse_protocol(first, cur, last);
-                break;
-                
-            case UDOMAIN:
-                parse_domain(first, cur);
-                break;
-                
-            case UPORT:
-                parse_port(first, cur);
-                break;
-
-            case UPATH:
-                parse_path(first, cur);
-                break;
-            
-            case UFRAGMENT:
-                parse_fragment(first, cur);
-                break;
-
-            case UQUERY:
-                parse_query(first, cur);
-                break;
-            };
-
-            assert(first == last);
-            assert(cur == last);
-
-            return uri;
-        }
-
-    private:
-        uri_t uri;
-        state_t state;
-    };
 
 
     uri_t::uri_t() {
@@ -177,7 +21,8 @@ namespace crequests {
           m_path {uri.m_path},
           m_fragment {uri.m_fragment},
           m_query {uri.m_query},
-          m_params {uri.m_params}
+          m_params {uri.m_params},
+          m_is_valid {uri.m_is_valid}
     {
         
     }
@@ -190,7 +35,8 @@ namespace crequests {
           m_path {std::move(uri.m_path)},
           m_fragment {std::move(uri.m_fragment)},
           m_query {std::move(uri.m_query)},
-          m_params {std::move(uri.m_params)}
+          m_params {std::move(uri.m_params)},
+          m_is_valid {uri.m_is_valid}
     {
         
     }
@@ -205,6 +51,7 @@ namespace crequests {
             m_fragment = uri.m_fragment;
             m_query = uri.m_query;
             m_params = uri.m_params;
+            m_is_valid = uri.m_is_valid;
         }
 
         return *this;
@@ -250,6 +97,10 @@ namespace crequests {
 
     void uri_t::params(const params_t& params) {
         m_params = params;
+    }
+
+    void uri_t::is_valid(bool is_valid) {
+        m_is_valid = is_valid;
     }
 
 
@@ -328,15 +179,53 @@ namespace crequests {
         return m_params;
     }
 
+    bool uri_t::is_valid() const {
+        return m_is_valid;
+    }
+
 
     /****************************************************************************
      * Other functions.
      ***************************************************************************/
 
 
-    uri_t uri_t::from_string(const string_t& str) {
-        uri_parser_t parser(str);
-        return parser.parse();
+    uri_t uri_t::from_string(const string_t& str_) {
+        string_t str = str_;
+        bool schema_exists = str.substr(0, 4) != "http" and str.substr(0, 5) != "https";
+        if (schema_exists)
+            str = "http://" + str;
+
+        uri_t uri;
+        
+        struct http_parser_url u;
+        auto rv = http_parser_parse_url(str.c_str(), str.size(), 0, &u);
+        if (rv != 0) {
+            uri.is_valid(false);
+        }
+        else {
+            uri.is_valid(true);
+            if (not schema_exists and u.field_set & (1 << UF_SCHEMA))
+                uri.protocol(protocol_t{str.substr(u.field_data[UF_SCHEMA].off,
+                                                   u.field_data[UF_SCHEMA].len)});
+            if (u.field_set & (1 << UF_HOST))
+                uri.domain(domain_t{str.substr(u.field_data[UF_HOST].off,
+                                               u.field_data[UF_HOST].len)});
+            if (u.field_set & (1 << UF_PORT))
+                uri.port(port_t{str.substr(u.field_data[UF_PORT].off,
+                                           u.field_data[UF_PORT].len)});
+            if (u.field_set & (1 << UF_PATH))
+                uri.path(path_t{str.substr(u.field_data[UF_PATH].off,
+                                           u.field_data[UF_PATH].len)});
+            if (u.field_set & (1 << UF_QUERY))
+                uri.query(query_t{str.substr(u.field_data[UF_QUERY].off,
+                                             u.field_data[UF_QUERY].len)});
+            if (u.field_set & (1 << UF_FRAGMENT))
+                uri.fragment(fragment_t{str.substr(u.field_data[UF_FRAGMENT].off,
+                                                   u.field_data[UF_FRAGMENT].len)});
+        }
+
+        uri.url(uri.make_url());
+        return uri;
     }
 
     void uri_t::update(const uri_t& uri) {
@@ -444,10 +333,10 @@ namespace crequests {
             out << ":" << m_port;
         if (not m_path.empty())
             out << m_path;
-        if (not m_fragment.empty())
-            out << "#" << m_fragment;
         if (not m_query.empty())
             out << "?" << m_query;
+        if (not m_fragment.empty())
+            out << "#" << m_fragment;
 
         return url_t(out.str());
     }
@@ -458,8 +347,8 @@ namespace crequests {
             << "domain: " << uri.domain() << "\n"
             << "port: " << uri.port() << "\n"
             << "path: " << uri.path() << "\n"
-            << "fragment: " << uri.fragment() << "\n"
-            << "query: " << uri.query() << "\n";
+            << "query: " << uri.query() << "\n"
+            << "fragment: " << uri.fragment() << "\n";
 
         return out;
     }

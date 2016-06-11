@@ -7,8 +7,8 @@
 namespace crequests {
 
 
-    class redirects_t : public std::vector<response_t> {
-        using std::vector<response_t>::vector;
+    class redirects_t : public vector_t<response_t> {
+        using vector_t<response_t>::vector;
 
     public:
         void add(const response_t& response);

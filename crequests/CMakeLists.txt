@@ -14,6 +14,8 @@ set(CREQUESTS_SOURCES
     types.cpp
     uri.cpp
     utils.cpp
+    ssl_auth.cpp
+    ssl_certs.cpp
     
     ../external/http_parser/http_parser.c
 )
@@ -38,6 +40,8 @@ set(CREQUESTS_HEADERS
     types.h
     uri.h
     utils.h
+    ssl_auth.h
+    ssl_certs.h
 )
 
 find_package(Boost COMPONENTS system iostreams)

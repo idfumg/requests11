@@ -47,6 +47,7 @@ namespace crequests {
         void fragment(const fragment_t& fragment);
         void query(const query_t& query);
         void params(const params_t& params);
+        void is_valid(bool is_valid);
 
         void url(url_t&& url);
         void protocol(protocol_t&& protocol);
@@ -65,6 +66,7 @@ namespace crequests {
         const fragment_t& fragment() const;
         const query_t& query() const;
         const params_t& params() const;
+        bool is_valid() const;
 
     private:
         void set_defaults();
@@ -78,6 +80,7 @@ namespace crequests {
         fragment_t m_fragment;
         query_t m_query;
         params_t m_params;
+        bool m_is_valid {false};
     };
 
 

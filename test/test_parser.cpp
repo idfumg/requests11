@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "types.h"
 #include "gtest/gtest.h"
 
 using namespace testing;
@@ -16,7 +17,7 @@ TEST(Parser, StatusAcquire) {
     unsigned short http_major {};
     unsigned short http_minor {};
     unsigned int status_code {};
-    std::string status_message {};
+    string_t status_message {};
     
     auto status_fn = [&](const char* at,
                          size_t length,
@@ -49,7 +50,7 @@ TEST(Parser, HeaderFieldAcquire) {
         "Accept: */*\r\n"
         "Accept-Encoding: gzip, deflate\r\n\r\n";
 
-    std::string header_field;
+    string_t header_field;
     auto header_field_fn = [&](const char* at,
                                size_t length) {
         header_field.reserve(length);
@@ -72,7 +73,7 @@ TEST(Parser, HeaderValueAcquire) {
         "Accept: */*\r\n"
         "Accept-Encoding: gzip, deflate\r\n\r\n";
 
-    std::string header_value;
+    string_t header_value;
     auto header_value_fn = [&](const char* at,
                                size_t length) {
         header_value.reserve(length);
@@ -89,7 +90,7 @@ TEST(Parser, HeaderValueAcquire) {
 TEST(Parser, FeedHeadersConsequencelly) {
     parser_t parser(parser_t::parser_type_t::RESPONSE);
 
-    const std::vector<std::string> v = {
+    const vector_t<string_t> v = {
         "HTTP/1.1 200 OK\r\n",
         "Connection: close\r\n",
         "Accept: */*\r\n",
@@ -286,7 +287,7 @@ TEST(Parser, ChunkDataAcquire) {
         "jjj\r\n";
 
     int count {};
-    std::string second_body;
+    string_t second_body;
     auto chunk_data_cb = [&](const char* at, size_t length) {
         second_body.reserve(length);
         second_body.assign(at, length);

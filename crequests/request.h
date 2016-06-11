@@ -7,6 +7,8 @@
 #include "uri.h"
 #include "auth.h"
 #include "cookies.h"
+#include "ssl_auth.h"
+#include "ssl_certs.h"
 
 namespace crequests {
 
@@ -78,6 +80,8 @@ namespace crequests {
         void keep_alive(const keep_alive_t& keep_alive);
         void cache_redirects(const cache_redirects_t& cache_redirects);
         void cookies(const cookies_t& cookies);
+        void ssl_auth(const ssl_auth_t& ssl_auth);
+        void ssl_certs(const ssl_certs_t& ssl_certs);
         
         void method(method_t&& method);
         void timeout(timeout_t&& timeout);
@@ -92,6 +96,8 @@ namespace crequests {
         void keep_alive(keep_alive_t&& keep_alive);
         void cache_redirects(cache_redirects_t&& cache_redirects);
         void cookies(cookies_t&& cookies);
+        void ssl_auth(ssl_auth_t&& ssl_auth);
+        void ssl_certs(ssl_certs_t&& ssl_certs);
 
         const uri_t& uri() const;
         const method_t& method() const;
@@ -107,6 +113,8 @@ namespace crequests {
         const keep_alive_t& keep_alive() const;
         const cache_redirects_t& cache_redirects() const;
         const cookies_t& cookies() const;
+        const ssl_auth_t& ssl_auth() const;
+        const ssl_certs_t& ssl_certs() const;
         
     private:
         uri_t m_uri {};
@@ -122,7 +130,9 @@ namespace crequests {
         final_callback_t m_final_callback {[](const response_t&){}};
         auth_t m_auth {};
         cache_redirects_t m_cache_redirects { true };
-        cookies_t m_cookies;
+        cookies_t m_cookies {};
+        ssl_auth_t m_ssl_auth {};
+        ssl_certs_t m_ssl_certs {};
     };
 
 

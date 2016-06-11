@@ -154,8 +154,8 @@ namespace crequests {
                 [](char c) { return c == '\0'; });
     }
 
-    std::vector<string_t> split(const string_t& value, const char delimiter) {
-        std::vector<string_t> rv;
+    vector_t<string_t> split(const string_t& value, const char delimiter) {
+        vector_t<string_t> rv;
         string_t token;
         std::istringstream stream(value);
         while(std::getline(stream, token, delimiter))

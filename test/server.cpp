@@ -10,14 +10,14 @@ namespace crequests {
     namespace {
 
         template <class StreamBufT>
-        std::string read_buffer(StreamBufT& response_buf, std::size_t length) {
+        string_t read_buffer(StreamBufT& response_buf, std::size_t length) {
             if (length == 0)
                 return "";
     
-            std::vector<char> buf(length);
+            vector_t<char> buf(length);
             response_buf.sgetn(&buf[0], length);
 
-            return std::string(buf.begin(), buf.end());
+            return string_t(buf.begin(), buf.end());
         }
 
         template <class StreamBufT>
@@ -398,8 +398,8 @@ namespace crequests {
                 }
 
                 std::istream request_stream(&request_buf);
-                std::string method;
-                std::string url;
+                string_t method;
+                string_t url;
                 request_stream >> method >> url >> std::ws;
                 request.method = method_t{method};
                 request.uri.domain("127.0.0.1"_domain);
@@ -568,8 +568,8 @@ namespace crequests {
 
     } /* anonymous namespace */
 
-    server_t::server_t(const std::string& address,
-                       const std::string& port,
+    server_t::server_t(const string_t& address,
+                       const string_t& port,
                        bool is_ssl)
         : io_service{},
           acceptor{io_service},
