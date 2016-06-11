@@ -23,14 +23,14 @@ int main(int argc, char** argv) {
             "http://www.vk.com"
         };
 
-        std::vector<future_t<response_ptr_t> > futures;
+        std::vector<asyncresponse_ptr_t > asyncresponses;
         service_t service;
 
         for (auto&& url : urls)
-            futures.push_back(AsyncGet(service, url));
+            asyncresponses.push_back(AsyncGet(service, url));
 
-        for (auto&& future : futures)
-            print(future.get()->error());
+        for (auto&& asyncresponse : asyncresponses)
+            print(asyncresponse->get()->error());
     
         auto session = service.new_session("http://www.vk.com", timeout_t{3});
 

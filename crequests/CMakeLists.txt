@@ -16,6 +16,7 @@ set(CREQUESTS_SOURCES
     utils.cpp
     ssl_auth.cpp
     ssl_certs.cpp
+    asyncresponse.cpp
     
     ../external/http_parser/http_parser.c
 )
@@ -42,6 +43,7 @@ set(CREQUESTS_HEADERS
     utils.h
     ssl_auth.h
     ssl_certs.h
+    asyncresponse.h
 )
 
 find_package(Boost COMPONENTS system iostreams)

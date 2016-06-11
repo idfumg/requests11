@@ -2,6 +2,7 @@
 #define API_H
 
 #include "response.h"
+#include "asyncresponse.h"
 #include "service.h"
 #include "session.h"
 
@@ -62,42 +63,42 @@ namespace crequests {
     }
 
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncGet(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncGet(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncGet();
     }
 
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncPost(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncPost(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncPost();
     }
     
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncPut(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncPut(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncPut();
     }
 
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncPatch(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncPatch(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncPatch();
     }
 
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncDelete(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncDelete(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncDelete();
     }
 
     template <class ServiceT, class... Args>
-    future_t<response_ptr_t> AsyncHead(ServiceT&& service, Args&& ...args) {
+    asyncresponse_ptr_t AsyncHead(ServiceT&& service, Args&& ...args) {
         auto session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
         return session->AsyncHead();

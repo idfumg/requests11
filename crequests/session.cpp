@@ -1,7 +1,6 @@
 #include "session.h"
 #include "connection.h"
 #include "service.h"
-#include "response.h"
 
 namespace crequests {
 
@@ -29,7 +28,7 @@ namespace crequests {
         session_impl_t(service_t& service);
 
     public:
-        future_t<response_ptr_t> Send();
+        asyncresponse_ptr_t Send();
 
         void set_option(const string_t& url);
         void set_option(const url_t& url);
@@ -297,7 +296,7 @@ namespace crequests {
      ***************************************************************************/
 
 
-    future_t<response_ptr_t> session_impl_t::Send() {
+    asyncresponse_ptr_t session_impl_t::Send() {
         if (connection and request.cache_redirects())
             skip_redirects(*connection->get().get());
         else
@@ -318,7 +317,7 @@ namespace crequests {
 
         connection->start();
 
-        return connection->get();
+        return std::make_shared<asyncresponse_t>(connection->get());
     }
 
     void session_impl_t::skip_redirects(const response_t& response) {
@@ -574,37 +573,37 @@ namespace crequests {
      ***************************************************************************/
 
 
-    future_t<response_ptr_t> session_t::AsyncGet() {
+    asyncresponse_ptr_t session_t::AsyncGet() {
         pimpl->set_option(method_t {"GET"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncPost() {
+    asyncresponse_ptr_t session_t::AsyncPost() {
         pimpl->set_option(method_t {"POST"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncPut() {
+    asyncresponse_ptr_t session_t::AsyncPut() {
         pimpl->set_option(method_t {"PUT"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncPatch() {
+    asyncresponse_ptr_t session_t::AsyncPatch() {
         pimpl->set_option(method_t {"PATCH"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncDelete() {
+    asyncresponse_ptr_t session_t::AsyncDelete() {
         pimpl->set_option(method_t {"DELETE"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncHead() {
+    asyncresponse_ptr_t session_t::AsyncHead() {
         pimpl->set_option(method_t {"HEAD"});
         return AsyncSend();
     }
 
-    future_t<response_ptr_t> session_t::AsyncSend() {
+    asyncresponse_ptr_t session_t::AsyncSend() {
         return pimpl->Send();
     }
 
@@ -639,7 +638,7 @@ namespace crequests {
     }
 
     response_ptr_t session_t::Send() {
-        return pimpl->Send().get();
+        return pimpl->Send()->get();
     }
 
 

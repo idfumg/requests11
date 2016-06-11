@@ -4,6 +4,8 @@
 #include "request.h"
 #include "utils.h"
 #include "auth.h"
+#include "response.h"
+#include "asyncresponse.h"
 
 namespace crequests {
 
@@ -16,13 +18,13 @@ namespace crequests {
         ~session_t();
 
     public:
-        future_t<response_ptr_t> AsyncGet();
-        future_t<response_ptr_t> AsyncPost();
-        future_t<response_ptr_t> AsyncPut();
-        future_t<response_ptr_t> AsyncPatch();
-        future_t<response_ptr_t> AsyncDelete();
-        future_t<response_ptr_t> AsyncHead();
-        future_t<response_ptr_t> AsyncSend();
+        asyncresponse_ptr_t AsyncGet();
+        asyncresponse_ptr_t AsyncPost();
+        asyncresponse_ptr_t AsyncPut();
+        asyncresponse_ptr_t AsyncPatch();
+        asyncresponse_ptr_t AsyncDelete();
+        asyncresponse_ptr_t AsyncHead();
+        asyncresponse_ptr_t AsyncSend();
 
         response_ptr_t Get();
         response_ptr_t Post();

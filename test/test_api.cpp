@@ -286,7 +286,7 @@ TEST(Api, AsyncDefault) {
     std::thread thread([&server](){server.run();});
     
     service_t service;
-    auto response = AsyncGet(service, "http://127.0.0.1:8080/").get();
+    auto response = AsyncGet(service, "http://127.0.0.1:8080/")->get();
     
     EXPECT_EQ(response->http_major().value(), 1);
     EXPECT_EQ(response->http_minor().value(), 1);
@@ -308,7 +308,7 @@ TEST(Api, SessionAsyncGet) {
     
     service_t service;
     auto session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
-    auto response = session->AsyncGet().get();
+    auto response = session->AsyncGet()->get();
     
     EXPECT_EQ(response->http_major().value(), 1);
     EXPECT_EQ(response->http_minor().value(), 1);
@@ -331,13 +331,13 @@ TEST(Api, SessionAsyncGetTwoRequests) {
     auto session = service.new_session( "127.0.0.1:8080/", timeout_t{0});
     
     auto response_future = session->AsyncGet();
-    auto response = response_future.get();
+    auto response = response_future->get();
     
     EXPECT_EQ(response->error().code_to_string(), "TIMEOUT");
 
     set_option(session, timeout_t{5});
     auto response2_future = session->AsyncGet();
-    response = response2_future.get();
+    response = response2_future->get();
     
     EXPECT_EQ(response->error().code_to_string(), "SUCCESS");
 
