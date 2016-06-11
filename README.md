@@ -73,14 +73,14 @@ static const std::vector<std::string> urls = {
     "http://www.vk.com"
 };
 
-std::vector< future_t< response_ptr_t> > futures;
+std::vector< asyncresponse_ptr_t > asyncresponses;
 service_t service;
 
 for (auto&& url : urls)
-    futures.push_back(AsyncGet(service, url));
+    asyncresponses.push_back(AsyncGet(service, url));
 
-for (auto&& future : futures)
-    print(future.get()->error());
+for (auto&& asyncresponse : asyncresponses)
+    print(asyncresponses->get()->error());
 </code></pre>
 
 If you do not want to explicit wait response from server you can set final callback to do the work.
