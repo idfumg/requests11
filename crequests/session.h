@@ -58,6 +58,7 @@ namespace crequests {
         void set_option(const ssl_auth_t& ssl_auth);
         void set_option(const ssl_certs_t& ssl_certs);
         void set_option(const throw_on_error_t& throw_on_error);
+        void set_option(const body_callback_t& body_callback);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -83,6 +84,7 @@ namespace crequests {
         void set_option(ssl_auth_t&& ssl_auth);
         void set_option(ssl_certs_t&& ssl_certs);
         void set_option(throw_on_error_t&& throw_on_error);
+        void set_option(body_callback_t&& body_callback);
 
         bool is_expired() const;
 

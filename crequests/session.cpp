@@ -54,6 +54,7 @@ namespace crequests {
         void set_option(const ssl_auth_t& ssl_auth);
         void set_option(const ssl_certs_t& ssl_certs);
         void set_option(const throw_on_error_t& throw_on_error);
+        void set_option(const body_callback_t& body_callback);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -79,6 +80,7 @@ namespace crequests {
         void set_option(ssl_auth_t&& ssl_auth);
         void set_option(ssl_certs_t&& ssl_certs);
         void set_option(throw_on_error_t&& throw_on_error);
+        void set_option(body_callback_t&& body_callback);
 
         bool is_expired() const;
         void skip_redirects(const response_t& response);
@@ -198,6 +200,10 @@ namespace crequests {
         request.throw_on_error(throw_on_error);
     }
 
+    void session_impl_t::set_option(const body_callback_t& body_callback) {
+        request.body_callback(body_callback);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -298,6 +304,10 @@ namespace crequests {
 
     void session_impl_t::set_option(throw_on_error_t&& throw_on_error) {
         request.throw_on_error(std::move(throw_on_error));
+    }
+
+    void session_impl_t::set_option(body_callback_t&& body_callback) {
+        request.body_callback(std::move(body_callback));
     }
 
 
@@ -483,6 +493,10 @@ namespace crequests {
         pimpl->set_option(throw_on_error);
     }
 
+    void session_t::set_option(const body_callback_t& body_callback) {
+        pimpl->set_option(body_callback);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -583,6 +597,10 @@ namespace crequests {
 
     void session_t::set_option(throw_on_error_t&& throw_on_error) {
         pimpl->set_option(std::move(throw_on_error));
+    }
+
+    void session_t::set_option(body_callback_t&& body_callback) {
+        pimpl->set_option(std::move(body_callback));
     }
 
 

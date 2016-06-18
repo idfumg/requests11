@@ -84,6 +84,7 @@ namespace crequests {
         void ssl_auth(const ssl_auth_t& ssl_auth);
         void ssl_certs(const ssl_certs_t& ssl_certs);
         void throw_on_error(const throw_on_error_t& throw_on_error);
+        void body_callback(const body_callback_t& body_callback);
         
         void method(method_t&& method);
         void timeout(timeout_t&& timeout);
@@ -101,6 +102,7 @@ namespace crequests {
         void ssl_auth(ssl_auth_t&& ssl_auth);
         void ssl_certs(ssl_certs_t&& ssl_certs);
         void throw_on_error(throw_on_error_t&& throw_on_error);
+        void body_callback(body_callback_t&& body_callback);
 
         const uri_t& uri() const;
         const method_t& method() const;
@@ -119,6 +121,7 @@ namespace crequests {
         const ssl_auth_t& ssl_auth() const;
         const ssl_certs_t& ssl_certs() const;
         const throw_on_error_t& throw_on_error() const;
+        const body_callback_t& body_callback() const;
         
     private:
         uri_t m_uri {};
@@ -138,6 +141,7 @@ namespace crequests {
         ssl_auth_t m_ssl_auth {};
         ssl_certs_t m_ssl_certs {};
         throw_on_error_t m_throw_on_error {false};
+        body_callback_t m_body_callback;
     };
 
 

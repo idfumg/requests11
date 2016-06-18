@@ -303,7 +303,10 @@ namespace crequests {
         parser->bind_cb(parser_t::HEADERS_COMPLETE, headers_complete_fn);
 
         auto body_fn = [this](const char* at, size_t length) {
-            raw.value().append(at, length);
+            if (response->request().body_callback())
+                response->request().body_callback()(at, length, error_t{});
+            else
+                raw.value().append(at, length);
             parser->pause();
         };
 
@@ -687,7 +690,8 @@ namespace crequests {
     void conn_impl_t::end() {
         resolver.cancel();
         timeout_timer.cancel();
-        response->request().final_callback()(*response);
+        if (response->request().final_callback())
+            response->request().final_callback()(*response);
         setup_dispose_timer();
 
         if (response->request().keep_alive()) {
@@ -701,7 +705,11 @@ namespace crequests {
         }
 
         response->raw(std::move(raw));
-        if (response->request().throw_on_error())
+
+        if (response->request().body_callback())
+            response->request().body_callback()(nullptr, 0, response->error());
+
+        if (response->error() and response->request().throw_on_error())
             promise.set_exception(std::make_exception_ptr(response->error()));
         else
             promise.set_value(response);

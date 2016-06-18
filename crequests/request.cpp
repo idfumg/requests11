@@ -29,7 +29,8 @@ namespace crequests {
           m_cookies {request.m_cookies},
           m_ssl_auth {request.m_ssl_auth},
           m_ssl_certs {request.m_ssl_certs},
-          m_throw_on_error {request.m_throw_on_error}
+          m_throw_on_error {request.m_throw_on_error},
+          m_body_callback {request.m_body_callback}
     {
         
     }
@@ -51,7 +52,8 @@ namespace crequests {
           m_cookies {std::move(request.m_cookies)},
           m_ssl_auth {std::move(request.m_ssl_auth)},
           m_ssl_certs {std::move(request.m_ssl_certs)},
-          m_throw_on_error {std::move(request.m_throw_on_error)}
+          m_throw_on_error {std::move(request.m_throw_on_error)},
+          m_body_callback {std::move(request.m_body_callback)}
     {
         
     }
@@ -75,6 +77,7 @@ namespace crequests {
             m_ssl_auth = request.m_ssl_auth;
             m_ssl_certs = request.m_ssl_certs;
             m_throw_on_error = request.m_throw_on_error;
+            m_body_callback = request.m_body_callback;
         }
 
         return *this;
@@ -238,6 +241,10 @@ namespace crequests {
         m_throw_on_error = throw_on_error;
     }
 
+    void request_t::body_callback(const body_callback_t& body_callback) {
+        m_body_callback = body_callback;
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -306,6 +313,10 @@ namespace crequests {
 
     void request_t::throw_on_error(throw_on_error_t&& throw_on_error) {
         m_throw_on_error = std::move(throw_on_error);
+    }
+
+    void request_t::body_callback(body_callback_t&& body_callback) {
+        m_body_callback = std::move(body_callback);
     }
 
 
@@ -380,6 +391,10 @@ namespace crequests {
 
     const throw_on_error_t& request_t::throw_on_error() const {
         return m_throw_on_error;
+    }
+
+    const body_callback_t& request_t::body_callback() const {
+        return m_body_callback;
     }
 
 

@@ -46,6 +46,10 @@ namespace crequests {
     class service_t;
     
     using final_callback_t = std::function<void(const response_t& response)>;
+    class error_t;
+    using body_callback_t = std::function<void(const char* at,
+                                               size_t length,
+                                               const crequests::error_t& error)>;
 }
 
 #endif /* TYPES_H */

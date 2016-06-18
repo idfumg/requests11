@@ -216,12 +216,50 @@ TEST(ConnectionBad, ThrowOnError) {
     
     service_t service;
     try {
-        auto response =
-            Get(service, "http://127.0.0.1:8080/read_status_error",
-                throw_on_error_t{true}).get();
+        Get(service, "http://127.0.0.1:8080/read_status_error",
+            throw_on_error_t{true}).get();
     } catch (const crequests::error_t& e) {
         EXPECT_EQ(e.code(), error_code_t::READ_STATUS_ERROR);
     }
+
+    server.stop();
+    thread.join();
+}
+
+TEST(ConnectionGood,  GetContentLengthWithBodyCallback) {
+    server_t server{"127.0.0.1", "8080"};
+    std::thread thread([&server](){server.run();});
+    
+    service_t service;
+    std::string result;
+    body_callback_t callback = [&result](const char* at, size_t length,
+                                         const crequests::error_t& e) {
+        EXPECT_FALSE(e);
+        result.append(at, length);
+    };
+    auto r = Get(service, "127.0.0.1:8080/get_content_length", callback).get();
+
+    EXPECT_EQ(result.front(), 'a');
+    EXPECT_EQ(result.back(), 'z');
+    EXPECT_EQ(result.size(), 100);
+    EXPECT_EQ(r->raw().value(), "");
+
+    server.stop();
+    thread.join();
+}
+
+TEST(ConnectionBad, ErrorThroughBodyCallback) {
+    server_t server{"127.0.0.1", "8080"};
+    std::thread thread([&server](){server.run();});
+    
+    service_t service;
+    body_callback_t callback = [](const char* at, size_t length,
+                                  const crequests::error_t& e) {
+        EXPECT_FALSE(at);
+        EXPECT_EQ(length, 0);
+        EXPECT_TRUE(e);
+    };
+    Get(service, "http://127.0.0.1:8080/read_status_error", callback).get();
 
     server.stop();
     thread.join();
