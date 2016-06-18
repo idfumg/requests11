@@ -685,9 +685,6 @@ namespace crequests {
     }
 
     void conn_impl_t::end() {
-        response->raw(std::move(raw));
-
-        promise.set_value(response);
         resolver.cancel();
         timeout_timer.cancel();
         response->request().final_callback()(*response);
@@ -702,6 +699,12 @@ namespace crequests {
         else {
             stream.cancel();
         }
+
+        response->raw(std::move(raw));
+        if (response->request().throw_on_error())
+            promise.set_exception(std::make_exception_ptr(response->error()));
+        else
+            promise.set_value(response);
     }
 
     void conn_impl_t::perform_redirect() {

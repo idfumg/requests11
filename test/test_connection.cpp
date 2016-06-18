@@ -209,3 +209,20 @@ TEST(ConnectionGood,  GetBigUntilEofSsl) {
     server.stop();
     thread.join();
 }
+
+TEST(ConnectionBad, ThrowOnError) {
+    server_t server{"127.0.0.1", "8080"};
+    std::thread thread([&server](){server.run();});
+    
+    service_t service;
+    try {
+        auto response =
+            Get(service, "http://127.0.0.1:8080/read_status_error",
+                throw_on_error_t{true}).get();
+    } catch (const crequests::error_t& e) {
+        EXPECT_EQ(e.code(), error_code_t::READ_STATUS_ERROR);
+    }
+
+    server.stop();
+    thread.join();
+}

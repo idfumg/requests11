@@ -53,6 +53,7 @@ namespace crequests {
         void set_option(const cookies_t& cookies);
         void set_option(const ssl_auth_t& ssl_auth);
         void set_option(const ssl_certs_t& ssl_certs);
+        void set_option(const throw_on_error_t& throw_on_error);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -77,6 +78,7 @@ namespace crequests {
         void set_option(cookies_t&& cookies);
         void set_option(ssl_auth_t&& ssl_auth);
         void set_option(ssl_certs_t&& ssl_certs);
+        void set_option(throw_on_error_t&& throw_on_error);
 
         bool is_expired() const;
         void skip_redirects(const response_t& response);
@@ -192,6 +194,10 @@ namespace crequests {
         request.ssl_certs(ssl_certs);
     }
 
+    void session_impl_t::set_option(const throw_on_error_t& throw_on_error) {
+        request.throw_on_error(throw_on_error);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -288,6 +294,10 @@ namespace crequests {
 
     void session_impl_t::set_option(ssl_certs_t&& ssl_certs) {
         request.ssl_certs(std::move(ssl_certs));
+    }
+
+    void session_impl_t::set_option(throw_on_error_t&& throw_on_error) {
+        request.throw_on_error(std::move(throw_on_error));
     }
 
 
@@ -469,6 +479,10 @@ namespace crequests {
         pimpl->set_option(ssl_certs);
     }
 
+    void session_t::set_option(const throw_on_error_t& throw_on_error) {
+        pimpl->set_option(throw_on_error);
+    }
+
 
     /****************************************************************************
      * Set. Rvalue reference.
@@ -565,6 +579,10 @@ namespace crequests {
 
     void session_t::set_option(ssl_certs_t&& ssl_certs) {
         pimpl->set_option(std::move(ssl_certs));
+    }
+
+    void session_t::set_option(throw_on_error_t&& throw_on_error) {
+        pimpl->set_option(std::move(throw_on_error));
     }
 
 

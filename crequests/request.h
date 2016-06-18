@@ -22,6 +22,7 @@ namespace crequests {
     declare_string(data);
     declare_bool(keep_alive);
     declare_bool(cache_redirects);
+    declare_bool(throw_on_error);
 
     
     const headers_t DEFAULT_HEADERS {
@@ -82,6 +83,7 @@ namespace crequests {
         void cookies(const cookies_t& cookies);
         void ssl_auth(const ssl_auth_t& ssl_auth);
         void ssl_certs(const ssl_certs_t& ssl_certs);
+        void throw_on_error(const throw_on_error_t& throw_on_error);
         
         void method(method_t&& method);
         void timeout(timeout_t&& timeout);
@@ -98,6 +100,7 @@ namespace crequests {
         void cookies(cookies_t&& cookies);
         void ssl_auth(ssl_auth_t&& ssl_auth);
         void ssl_certs(ssl_certs_t&& ssl_certs);
+        void throw_on_error(throw_on_error_t&& throw_on_error);
 
         const uri_t& uri() const;
         const method_t& method() const;
@@ -115,6 +118,7 @@ namespace crequests {
         const cookies_t& cookies() const;
         const ssl_auth_t& ssl_auth() const;
         const ssl_certs_t& ssl_certs() const;
+        const throw_on_error_t& throw_on_error() const;
         
     private:
         uri_t m_uri {};
@@ -133,6 +137,7 @@ namespace crequests {
         cookies_t m_cookies {};
         ssl_auth_t m_ssl_auth {};
         ssl_certs_t m_ssl_certs {};
+        throw_on_error_t m_throw_on_error {false};
     };
 
 
