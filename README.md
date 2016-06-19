@@ -3,7 +3,7 @@ c++ HTTP library inspired by python requests.
 
 Library dependecies:
 - OpenSSL
-- Boost
+- Boost: system, iostreams, asio
 - C++11
 
 This library is created for making comfortable way to do HTTP requests.
