@@ -55,10 +55,15 @@ namespace crequests {
         void set_option(const keep_alive_t& keep_alive);
         void set_option(const cache_redirects_t& cache_redirects);
         void set_option(const cookies_t& cookies);
-        void set_option(const ssl_auth_t& ssl_auth);
-        void set_option(const ssl_certs_t& ssl_certs);
         void set_option(const throw_on_error_t& throw_on_error);
         void set_option(const body_callback_t& body_callback);
+        void set_option(const ssl_auth_t& ssl_auth);
+        void set_option(const ssl_certs_t& ssl_certs);
+        void set_option(const always_verify_peer_t& always_verify_peer);
+        void set_option(const verify_path_t& verify_path);
+        void set_option(const verify_filename_t& verify_filename);
+        void set_option(const certificate_file_t& certificate_file);
+        void set_option(const private_key_file_t& private_key_file);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -81,10 +86,15 @@ namespace crequests {
         void set_option(keep_alive_t&& keep_alive);
         void set_option(cache_redirects_t&& cache_redirects);
         void set_option(cookies_t&& cookies);
-        void set_option(ssl_auth_t&& ssl_auth);
-        void set_option(ssl_certs_t&& ssl_certs);
         void set_option(throw_on_error_t&& throw_on_error);
         void set_option(body_callback_t&& body_callback);
+        void set_option(ssl_auth_t&& ssl_auth);
+        void set_option(ssl_certs_t&& ssl_certs);
+        void set_option(always_verify_peer_t&& always_verify_peer);
+        void set_option(verify_path_t&& verify_path);
+        void set_option(verify_filename_t&& verify_filename);
+        void set_option(certificate_file_t&& certificate_file);
+        void set_option(private_key_file_t&& private_key_file);
 
         bool is_expired() const;
 

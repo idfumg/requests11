@@ -23,6 +23,11 @@ namespace crequests {
     declare_bool(keep_alive);
     declare_bool(cache_redirects);
     declare_bool(throw_on_error);
+    declare_bool(always_verify_peer);
+    declare_string(verify_path);
+    declare_string(verify_filename);
+    declare_string(certificate_file);
+    declare_string(private_key_file);
 
     
     const headers_t DEFAULT_HEADERS {
@@ -81,10 +86,15 @@ namespace crequests {
         void keep_alive(const keep_alive_t& keep_alive);
         void cache_redirects(const cache_redirects_t& cache_redirects);
         void cookies(const cookies_t& cookies);
-        void ssl_auth(const ssl_auth_t& ssl_auth);
-        void ssl_certs(const ssl_certs_t& ssl_certs);
         void throw_on_error(const throw_on_error_t& throw_on_error);
         void body_callback(const body_callback_t& body_callback);
+        void ssl_auth(const ssl_auth_t& ssl_auth);
+        void ssl_certs(const ssl_certs_t& ssl_certs);
+        void always_verify_peer(const always_verify_peer_t& always_verify_peer);
+        void verify_path(const verify_path_t& verify_path);
+        void verify_filename(const verify_filename_t& verify_filename);
+        void certificate_file(const certificate_file_t& certificate_file);
+        void private_key_file(const private_key_file_t& private_key_file);
         
         void method(method_t&& method);
         void timeout(timeout_t&& timeout);
@@ -99,10 +109,15 @@ namespace crequests {
         void keep_alive(keep_alive_t&& keep_alive);
         void cache_redirects(cache_redirects_t&& cache_redirects);
         void cookies(cookies_t&& cookies);
-        void ssl_auth(ssl_auth_t&& ssl_auth);
-        void ssl_certs(ssl_certs_t&& ssl_certs);
         void throw_on_error(throw_on_error_t&& throw_on_error);
         void body_callback(body_callback_t&& body_callback);
+        void ssl_auth(ssl_auth_t&& ssl_auth);
+        void ssl_certs(ssl_certs_t&& ssl_certs);
+        void always_verify_peer(always_verify_peer_t&& always_verify_peer);
+        void verify_path(verify_path_t&& verify_path);
+        void verify_filename(verify_filename_t&& verify_filename);
+        void certificate_file(certificate_file_t&& certificate_file);
+        void private_key_file(private_key_file_t&& private_key_file);
 
         const uri_t& uri() const;
         const method_t& method() const;
@@ -118,15 +133,20 @@ namespace crequests {
         const keep_alive_t& keep_alive() const;
         const cache_redirects_t& cache_redirects() const;
         const cookies_t& cookies() const;
-        const ssl_auth_t& ssl_auth() const;
-        const ssl_certs_t& ssl_certs() const;
         const throw_on_error_t& throw_on_error() const;
         const body_callback_t& body_callback() const;
+        const ssl_auth_t& ssl_auth() const;
+        const ssl_certs_t& ssl_certs() const;
+        const always_verify_peer_t& always_verify_peer() const;
+        const verify_path_t& verify_path() const;
+        const verify_filename_t& verify_filename() const;
+        const certificate_file_t& certificate_file() const;
+        const private_key_file_t& private_key_file() const;
         
     private:
         uri_t m_uri {};
         method_t m_method { "GET" };
-        timeout_t m_timeout { 120 };
+        timeout_t m_timeout { 60 };
         store_timeout_t m_store_timeout { 60 };
         redirect_t m_redirect { true };
         redirect_count_t m_redirect_count { 10 };
@@ -138,10 +158,15 @@ namespace crequests {
         auth_t m_auth {};
         cache_redirects_t m_cache_redirects { true };
         cookies_t m_cookies {};
-        ssl_auth_t m_ssl_auth {};
-        ssl_certs_t m_ssl_certs {};
         throw_on_error_t m_throw_on_error {false};
         body_callback_t m_body_callback;
+        ssl_auth_t m_ssl_auth {};
+        ssl_certs_t m_ssl_certs {};
+        always_verify_peer_t m_always_verify_peer {false};
+        verify_path_t m_verify_path {};
+        verify_filename_t m_verify_filename {};
+        certificate_file_t m_certificate_file {};
+        private_key_file_t m_private_key_file {};
     };
 
 

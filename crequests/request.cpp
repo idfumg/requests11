@@ -27,10 +27,15 @@ namespace crequests {
           m_auth {request.m_auth},
           m_cache_redirects {request.m_cache_redirects},
           m_cookies {request.m_cookies},
+          m_throw_on_error {request.m_throw_on_error},
+          m_body_callback {request.m_body_callback},
           m_ssl_auth {request.m_ssl_auth},
           m_ssl_certs {request.m_ssl_certs},
-          m_throw_on_error {request.m_throw_on_error},
-          m_body_callback {request.m_body_callback}
+          m_always_verify_peer {request.m_always_verify_peer},
+          m_verify_path {request.m_verify_path},
+          m_verify_filename {request.m_verify_filename},
+          m_certificate_file {request.m_certificate_file},
+          m_private_key_file {request.m_private_key_file}
     {
         
     }
@@ -50,10 +55,15 @@ namespace crequests {
           m_auth {std::move(request.m_auth)},
           m_cache_redirects {std::move(request.m_cache_redirects)},
           m_cookies {std::move(request.m_cookies)},
+          m_throw_on_error {std::move(request.m_throw_on_error)},
+          m_body_callback {std::move(request.m_body_callback)},
           m_ssl_auth {std::move(request.m_ssl_auth)},
           m_ssl_certs {std::move(request.m_ssl_certs)},
-          m_throw_on_error {std::move(request.m_throw_on_error)},
-          m_body_callback {std::move(request.m_body_callback)}
+          m_always_verify_peer {std::move(request.m_always_verify_peer)},
+          m_verify_path {std::move(request.m_verify_path)},
+          m_verify_filename {std::move(request.m_verify_filename)},
+          m_certificate_file {std::move(request.m_certificate_file)},
+          m_private_key_file {std::move(request.m_private_key_file)}
     {
         
     }
@@ -74,10 +84,15 @@ namespace crequests {
             m_auth = request.m_auth;
             m_cache_redirects = request.m_cache_redirects;
             m_cookies = request.m_cookies;
-            m_ssl_auth = request.m_ssl_auth;
-            m_ssl_certs = request.m_ssl_certs;
             m_throw_on_error = request.m_throw_on_error;
             m_body_callback = request.m_body_callback;
+            m_ssl_auth = request.m_ssl_auth;
+            m_ssl_certs = request.m_ssl_certs;
+            m_always_verify_peer = request.m_always_verify_peer;
+            m_verify_path = request.m_verify_path;
+            m_verify_filename = request.m_verify_filename;
+            m_certificate_file = request.m_certificate_file;
+            m_private_key_file = request.m_private_key_file;
         }
 
         return *this;
@@ -229,6 +244,14 @@ namespace crequests {
         m_cookies = cookies;
     }
 
+    void request_t::throw_on_error(const throw_on_error_t& throw_on_error) {
+        m_throw_on_error = throw_on_error;
+    }
+
+    void request_t::body_callback(const body_callback_t& body_callback) {
+        m_body_callback = body_callback;
+    }
+
     void request_t::ssl_auth(const ssl_auth_t& ssl_auth) {
         m_ssl_auth = ssl_auth;
     }
@@ -237,12 +260,24 @@ namespace crequests {
         m_ssl_certs = ssl_certs;
     }
 
-    void request_t::throw_on_error(const throw_on_error_t& throw_on_error) {
-        m_throw_on_error = throw_on_error;
+    void request_t::always_verify_peer(const always_verify_peer_t& always_verify_peer) {
+        m_always_verify_peer = always_verify_peer;
     }
 
-    void request_t::body_callback(const body_callback_t& body_callback) {
-        m_body_callback = body_callback;
+    void request_t::verify_path(const verify_path_t& verify_path) {
+        m_verify_path = verify_path;
+    }
+
+    void request_t::verify_filename(const verify_filename_t& verify_filename) {
+        m_verify_filename = verify_filename;
+    }
+
+    void request_t::certificate_file(const certificate_file_t& certificate_file) {
+        m_certificate_file = certificate_file;
+    }
+
+    void request_t::private_key_file(const private_key_file_t& private_key_file) {
+        m_private_key_file = private_key_file;
     }
 
 
@@ -303,6 +338,14 @@ namespace crequests {
         m_cookies = std::move(cookies);
     }
 
+    void request_t::throw_on_error(throw_on_error_t&& throw_on_error) {
+        m_throw_on_error = std::move(throw_on_error);
+    }
+
+    void request_t::body_callback(body_callback_t&& body_callback) {
+        m_body_callback = std::move(body_callback);
+    }
+
     void request_t::ssl_auth(ssl_auth_t&& ssl_auth) {
         m_ssl_auth = std::move(ssl_auth);
     }
@@ -311,12 +354,24 @@ namespace crequests {
         m_ssl_certs = std::move(ssl_certs);
     }
 
-    void request_t::throw_on_error(throw_on_error_t&& throw_on_error) {
-        m_throw_on_error = std::move(throw_on_error);
+    void request_t::always_verify_peer(always_verify_peer_t&& always_verify_peer) {
+        m_always_verify_peer = std::move(always_verify_peer);
     }
 
-    void request_t::body_callback(body_callback_t&& body_callback) {
-        m_body_callback = std::move(body_callback);
+    void request_t::verify_path(verify_path_t&& verify_path) {
+        m_verify_path = std::move(verify_path);
+    }
+
+    void request_t::verify_filename(verify_filename_t&& verify_filename) {
+        m_verify_filename = std::move(verify_filename);
+    }
+
+    void request_t::certificate_file(certificate_file_t&& certificate_file) {
+        m_certificate_file = std::move(certificate_file);
+    }
+
+    void request_t::private_key_file(private_key_file_t&& private_key_file) {
+        m_private_key_file = std::move(private_key_file);
     }
 
 
@@ -381,6 +436,14 @@ namespace crequests {
         return m_cookies;
     }
 
+    const throw_on_error_t& request_t::throw_on_error() const {
+        return m_throw_on_error;
+    }
+
+    const body_callback_t& request_t::body_callback() const {
+        return m_body_callback;
+    }
+
     const ssl_auth_t& request_t::ssl_auth() const {
         return m_ssl_auth;
     }
@@ -389,12 +452,24 @@ namespace crequests {
         return m_ssl_certs;
     }
 
-    const throw_on_error_t& request_t::throw_on_error() const {
-        return m_throw_on_error;
+    const always_verify_peer_t& request_t::always_verify_peer() const {
+        return m_always_verify_peer;
     }
 
-    const body_callback_t& request_t::body_callback() const {
-        return m_body_callback;
+    const verify_path_t& request_t::verify_path() const {
+        return m_verify_path;
+    }
+
+    const verify_filename_t& request_t::verify_filename() const {
+        return m_verify_filename;
+    }
+
+    const certificate_file_t& request_t::certificate_file() const {
+        return m_certificate_file;
+    }
+
+    const private_key_file_t& request_t::private_key_file() const {
+        return m_private_key_file;
     }
 
 

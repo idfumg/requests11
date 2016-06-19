@@ -599,7 +599,7 @@ namespace crequests {
     }
 
     void server_t::do_accept() {
-        auto stream = std::make_shared<stream_t>(io_service, is_ssl, true);
+        auto stream = std::make_shared<stream_t>(io_service, is_ssl);
         
         auto callback = [this, stream](ec_t ec) {
             if (not acceptor.is_open())

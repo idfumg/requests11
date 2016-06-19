@@ -51,10 +51,15 @@ namespace crequests {
         void set_option(const keep_alive_t& keep_alive);
         void set_option(const cache_redirects_t& cache_redirects);
         void set_option(const cookies_t& cookies);
-        void set_option(const ssl_auth_t& ssl_auth);
-        void set_option(const ssl_certs_t& ssl_certs);
         void set_option(const throw_on_error_t& throw_on_error);
         void set_option(const body_callback_t& body_callback);
+        void set_option(const ssl_auth_t& ssl_auth);
+        void set_option(const ssl_certs_t& ssl_certs);
+        void set_option(const always_verify_peer_t& always_verify_peer);
+        void set_option(const verify_path_t& verify_path);
+        void set_option(const verify_filename_t& verify_filename);
+        void set_option(const certificate_file_t& certificate_file);
+        void set_option(const private_key_file_t& private_key_file);
 
         void set_option(string_t&& url);
         void set_option(url_t&& url);
@@ -77,10 +82,15 @@ namespace crequests {
         void set_option(keep_alive_t&& keep_alive);
         void set_option(cache_redirects_t&& cache_redirects);
         void set_option(cookies_t&& cookies);
-        void set_option(ssl_auth_t&& ssl_auth);
-        void set_option(ssl_certs_t&& ssl_certs);
         void set_option(throw_on_error_t&& throw_on_error);
         void set_option(body_callback_t&& body_callback);
+        void set_option(ssl_auth_t&& ssl_auth);
+        void set_option(ssl_certs_t&& ssl_certs);
+        void set_option(always_verify_peer_t&& always_verify_peer);
+        void set_option(verify_path_t&& verify_path);
+        void set_option(verify_filename_t&& verify_filename);
+        void set_option(certificate_file_t&& certificate_file);
+        void set_option(private_key_file_t&& private_key_file);
 
         bool is_expired() const;
         void skip_redirects(const response_t& response);
@@ -188,6 +198,14 @@ namespace crequests {
         request.cookies(cookies);
     }
 
+    void session_impl_t::set_option(const throw_on_error_t& throw_on_error) {
+        request.throw_on_error(throw_on_error);
+    }
+
+    void session_impl_t::set_option(const body_callback_t& body_callback) {
+        request.body_callback(body_callback);
+    }
+
     void session_impl_t::set_option(const ssl_auth_t& ssl_auth) {
         request.ssl_auth(ssl_auth);
     }
@@ -196,12 +214,24 @@ namespace crequests {
         request.ssl_certs(ssl_certs);
     }
 
-    void session_impl_t::set_option(const throw_on_error_t& throw_on_error) {
-        request.throw_on_error(throw_on_error);
+    void session_impl_t::set_option(const always_verify_peer_t& always_verify_peer) {
+        request.always_verify_peer(always_verify_peer);
     }
 
-    void session_impl_t::set_option(const body_callback_t& body_callback) {
-        request.body_callback(body_callback);
+    void session_impl_t::set_option(const verify_path_t& verify_path) {
+        request.verify_path(verify_path);
+    }
+
+    void session_impl_t::set_option(const verify_filename_t& verify_filename) {
+        request.verify_filename(verify_filename);
+    }
+
+    void session_impl_t::set_option(const certificate_file_t& certificate_file) {
+        request.certificate_file(certificate_file);
+    }
+
+    void session_impl_t::set_option(const private_key_file_t& private_key_file) {
+        request.private_key_file(private_key_file);
     }
 
 
@@ -294,6 +324,14 @@ namespace crequests {
         request.cookies(std::move(cookies));
     }
 
+    void session_impl_t::set_option(throw_on_error_t&& throw_on_error) {
+        request.throw_on_error(std::move(throw_on_error));
+    }
+
+    void session_impl_t::set_option(body_callback_t&& body_callback) {
+        request.body_callback(std::move(body_callback));
+    }
+
     void session_impl_t::set_option(ssl_auth_t&& ssl_auth) {
         request.ssl_auth(std::move(ssl_auth));
     }
@@ -302,12 +340,24 @@ namespace crequests {
         request.ssl_certs(std::move(ssl_certs));
     }
 
-    void session_impl_t::set_option(throw_on_error_t&& throw_on_error) {
-        request.throw_on_error(std::move(throw_on_error));
+    void session_impl_t::set_option(always_verify_peer_t&& always_verify_peer) {
+        request.always_verify_peer(std::move(always_verify_peer));
     }
 
-    void session_impl_t::set_option(body_callback_t&& body_callback) {
-        request.body_callback(std::move(body_callback));
+    void session_impl_t::set_option(verify_path_t&& verify_path) {
+        request.verify_path(std::move(verify_path));
+    }
+
+    void session_impl_t::set_option(verify_filename_t&& verify_filename) {
+        request.verify_filename(std::move(verify_filename));
+    }
+
+    void session_impl_t::set_option(certificate_file_t&& certificate_file) {
+        request.certificate_file(std::move(certificate_file));
+    }
+
+    void session_impl_t::set_option(private_key_file_t&& private_key_file) {
+        request.private_key_file(std::move(private_key_file));
     }
 
 
@@ -481,6 +531,14 @@ namespace crequests {
         pimpl->set_option(cookies);
     }
 
+    void session_t::set_option(const throw_on_error_t& throw_on_error) {
+        pimpl->set_option(throw_on_error);
+    }
+
+    void session_t::set_option(const body_callback_t& body_callback) {
+        pimpl->set_option(body_callback);
+    }
+
     void session_t::set_option(const ssl_auth_t& ssl_auth) {
         pimpl->set_option(ssl_auth);
     }
@@ -489,12 +547,24 @@ namespace crequests {
         pimpl->set_option(ssl_certs);
     }
 
-    void session_t::set_option(const throw_on_error_t& throw_on_error) {
-        pimpl->set_option(throw_on_error);
+    void session_t::set_option(const always_verify_peer_t& always_verify_peer) {
+        pimpl->set_option(always_verify_peer);
     }
 
-    void session_t::set_option(const body_callback_t& body_callback) {
-        pimpl->set_option(body_callback);
+    void session_t::set_option(const verify_path_t& verify_path) {
+        pimpl->set_option(verify_path);
+    }
+
+    void session_t::set_option(const verify_filename_t& verify_filename) {
+        pimpl->set_option(verify_filename);
+    }
+
+    void session_t::set_option(const certificate_file_t& certificate_file) {
+        pimpl->set_option(certificate_file);
+    }
+
+    void session_t::set_option(const private_key_file_t& private_key_file) {
+        pimpl->set_option(private_key_file);
     }
 
 
@@ -587,6 +657,14 @@ namespace crequests {
         pimpl->set_option(std::move(cookies));
     }
 
+    void session_t::set_option(throw_on_error_t&& throw_on_error) {
+        pimpl->set_option(std::move(throw_on_error));
+    }
+
+    void session_t::set_option(body_callback_t&& body_callback) {
+        pimpl->set_option(std::move(body_callback));
+    }
+
     void session_t::set_option(ssl_auth_t&& ssl_auth) {
         pimpl->set_option(std::move(ssl_auth));
     }
@@ -595,12 +673,24 @@ namespace crequests {
         pimpl->set_option(std::move(ssl_certs));
     }
 
-    void session_t::set_option(throw_on_error_t&& throw_on_error) {
-        pimpl->set_option(std::move(throw_on_error));
+    void session_t::set_option(always_verify_peer_t&& always_verify_peer) {
+        pimpl->set_option(std::move(always_verify_peer));
     }
 
-    void session_t::set_option(body_callback_t&& body_callback) {
-        pimpl->set_option(std::move(body_callback));
+    void session_t::set_option(verify_path_t&& verify_path) {
+        pimpl->set_option(std::move(verify_path));
+    }
+
+    void session_t::set_option(verify_filename_t&& verify_filename) {
+        pimpl->set_option(std::move(verify_filename));
+    }
+
+    void session_t::set_option(certificate_file_t&& certificate_file) {
+        pimpl->set_option(std::move(certificate_file));
+    }
+
+    void session_t::set_option(private_key_file_t&& private_key_file) {
+        pimpl->set_option(std::move(private_key_file));
     }
 
 

@@ -198,11 +198,7 @@ namespace crequests {
     conn_impl_t::conn_impl_t(service_t& service, const request_t& request)
         : service(service),
           strand(service.get_service()),
-          stream(service.get_service(),
-                 request.is_ssl(),
-                 false,
-                 request.ssl_auth(),
-                 request.ssl_certs()),
+          stream(service.get_service(), request),
           resolver(service.get_service()),
           timeout_timer(service.get_service()),
           dispose_timer(service.get_service()),
@@ -342,11 +338,7 @@ namespace crequests {
 
     void conn_impl_t::restart() {
         stream.cancel();
-        stream = stream_t(service.get_service(),
-                          response->request().is_ssl(),
-                          false,
-                          response->request().ssl_auth(),
-                          response->request().ssl_certs());
+        stream = stream_t(service.get_service(), response->request());
         parser = std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE);
         m_is_reused = false;
         start();
@@ -746,11 +738,7 @@ namespace crequests {
         redirects.add(*response);
         response->redirects(std::move(redirects));
 
-        stream = stream_t(service.get_service(),
-                          response->request().is_ssl(),
-                          false,
-                          response->request().ssl_auth(),
-                          response->request().ssl_certs());
+        stream = stream_t(service.get_service(), response->request());
 
         if (request_buf.size() > 0)
             request_buf.consume(request_buf.size());

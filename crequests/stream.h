@@ -2,8 +2,7 @@
 #define SOCKET_H
 
 #include "boost_asio.h"
-#include "ssl_auth.h"
-#include "ssl_certs.h"
+#include "request.h"
 
 #include <openssl/bio.h>
 #include <openssl/ssl.h>
@@ -61,39 +60,70 @@ namespace crequests {
     }
 
     template <class ServiceT>
-    static inline ssl_socket_ptr_t create_ssl_socket(
+    static inline ssl_socket_ptr_t create_ssl_socket_client(
         ServiceT&& service,
-        bool is_server,
-        const shared_ptr_t<X509>& cert,
-        const shared_ptr_t<EVP_PKEY>& key,
-        const vector_t<shared_ptr_t<X509> >& certs) {
+        const shared_ptr_t<X509>& cert, const shared_ptr_t<EVP_PKEY>& key,
+        const vector_t<shared_ptr_t<X509> >& certs,
+        const always_verify_peer_t& always_verify_peer,
+        const verify_path_t& verify_path,
+        const verify_filename_t& verify_filename,
+        const certificate_file_t& certificate_file,
+        const private_key_file_t& private_key_file,
+        const domain_t& domain)
+    {
+        boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23_client);
+        ctx.set_verify_mode(boost::asio::ssl::verify_none);
+        ctx.set_default_verify_paths();
+        ctx.set_options(boost::asio::ssl::context::default_workarounds);
 
-        if (not is_server) {
-            boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
-            ctx.set_options(boost::asio::ssl::context::default_workarounds);
-            ctx.set_verify_mode(boost::asio::ssl::verify_none);
-            ctx.set_default_verify_paths();
+        if (cert and key)
+            UseCertAndKey(ctx.impl(), cert.get(), key.get());
 
-            if (cert and key) {
-                UseCertAndKey(ctx.impl(), cert.get(), key.get());
-                ctx.set_verify_mode(boost::asio::ssl::verify_peer);
-            }
+        if (not certs.empty())
+            UseCACerts(ctx.impl(), certs);
 
-            if (not certs.empty()) {
-                UseCACerts(ctx.impl(), certs);
-                ctx.set_verify_mode(boost::asio::ssl::verify_peer);
-            }
+        if (not verify_path.empty())
+            ctx.add_verify_path(verify_path.value());
 
-            return std::make_shared<ssl_socket_t>(service, ctx);
-        }
-        else {
-            boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
-            ctx.set_verify_mode(boost::asio::ssl::verify_none);
-            ctx.set_default_verify_paths();
-            ctx.use_certificate_chain_file("cert/server.crt");
-            ctx.use_private_key_file("cert/server.key", boost::asio::ssl::context::pem);
-            return std::make_shared<ssl_socket_t>(service, ctx);
-        }
+        if (not verify_filename.empty())
+            ctx.load_verify_file(verify_filename.value());
+
+        if (not certificate_file.empty())
+            ctx.use_certificate_file(certificate_file.value(),
+                                     boost::asio::ssl::context::pem);
+
+        if (not private_key_file.empty())
+            ctx.use_private_key_file(private_key_file.value(),
+                                     boost::asio::ssl::context::pem);
+
+        if ((cert and key) or
+            not certs.empty() or
+            always_verify_peer or
+            not verify_path.empty() or
+            not verify_filename.empty())
+            ctx.set_verify_mode(boost::asio::ssl::verify_peer);
+
+        auto socket = std::make_shared<ssl_socket_t>(service, ctx);
+
+        if (not domain.empty() and always_verify_peer)
+            socket->set_verify_callback(
+                boost::asio::ssl::rfc2818_verification(domain.value()));
+
+        return socket;
+    }
+
+    template <class ServiceT>
+    static inline ssl_socket_ptr_t create_ssl_socket_server(ServiceT&& service)
+    {
+        boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23_server);
+        ctx.set_verify_mode(boost::asio::ssl::verify_none);
+        ctx.set_default_verify_paths();
+        ctx.set_options(boost::asio::ssl::context::default_workarounds);
+
+        ctx.use_certificate_chain_file("cert/server.crt");
+        ctx.use_private_key_file("cert/server.key", boost::asio::ssl::context::pem);
+
+        return std::make_shared<ssl_socket_t>(service, ctx);
     }
 
     template <class ServiceT>
@@ -104,11 +134,10 @@ namespace crequests {
     class stream_t {
     public:
         template <class ServiceT>
-        stream_t(ServiceT&& service,
-                 bool is_ssl = false,
-                 bool is_server = false,
-                 const ssl_auth_t& ssl_auth = ssl_auth_t(),
-                 const ssl_certs_t& ssl_certs = ssl_certs_t()) {
+        stream_t(ServiceT&& service, const request_t& request) {
+            const ssl_auth_t& ssl_auth = request.ssl_auth();
+            const ssl_certs_t& ssl_certs = request.ssl_certs();
+            
             if (not ssl_auth.first.empty() and not ssl_auth.second.empty()) {
                 cert = NewX509(ssl_auth.first.value());
                 key = NewEVP_PKEY(ssl_auth.second.value());
@@ -118,15 +147,30 @@ namespace crequests {
                 for (auto&& cert : ssl_certs)
                     certs.push_back(NewX509(cert.value()));
 
+            if (request.is_ssl()) {
+                ssl_socket = create_ssl_socket_client(service,
+                                                      cert, key,
+                                                      certs,
+                                                      request.always_verify_peer(),
+                                                      request.verify_path(),
+                                                      request.verify_filename(),
+                                                      request.certificate_file(),
+                                                      request.private_key_file(),
+                                                      request.uri().domain());
+            } else {
+                tcp_socket = create_tcp_socket(service);
+            }
+
+            type = boost::asio::ssl::stream_base::client;
+        }
+
+        template <class ServiceT>
+        stream_t(ServiceT&& service, bool is_ssl) {
             if (is_ssl)
-                ssl_socket = create_ssl_socket(service, is_server, cert, key, certs);
+                ssl_socket = create_ssl_socket_server(service);
             else
                 tcp_socket = create_tcp_socket(service);
-
-            if (is_server)
-                type = boost::asio::ssl::stream_base::server;
-            else
-                type = boost::asio::ssl::stream_base::client;
+            type = boost::asio::ssl::stream_base::server;
         }
 
         stream_t(stream_t&& stream) {
