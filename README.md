@@ -104,7 +104,7 @@ You can gzip you POST data on demand by using gzip_t{true} on api functions.
 response->raw() function return raw data received from the server.
 response->content() function return ungzipped data (if needed or raw data) automatically.
 
-Working with ssl certificates:
+In memory working with ssl certificates:
 <pre><code>
 using namespace crequests;
 service_t service;
@@ -117,6 +117,7 @@ auto ssl_certs = ssl_certs_t{certificate_t{"first"}, certificate_t{"second"}};
 auto response = Get(service, "https://some_url", ssl_certs);
 </code></pre>
 
+Also there are features for working with ceritificates and private keys files.
 You can adjust request way you want using type_t parameters or user defined literals.
 <pre><code>
 auto response = Get(service, "https://some_url", "a=1&b=2"_params, "443"_port);
@@ -124,5 +125,8 @@ auto response = Get(service, "https://some_url", "a=1&b=2"_params, "443"_port);
 All this parameters can be found in request.h.
 
 Thanks to:
+<pre>
 https://github.com/kennethreitz/requests
 https://github.com/whoshuu/cpr
+https://github.com/cpp-netlib/cpp-netlib
+</pre>
