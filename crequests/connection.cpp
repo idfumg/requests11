@@ -77,15 +77,15 @@ namespace crequests {
                 ec == boost::asio::error::eof or
                 ec == boost::asio::error::connection_reset or
                 ec == boost::asio::error::connection_aborted or
-                ec == boost::asio::error::broken_pipe;
+                ec == boost::asio::error::broken_pipe or
+                ec == boost::asio::ssl::error::stream_truncated;
         }
 
         template <class ErrorT>
         bool is_eof(const ErrorT& ec) {
-            return
+            return ec and
                 (ec == boost::asio::error::eof or
-                 (ec.category() == boost::asio::error::get_ssl_category() and
-                  ec.value() == ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ)));
+                 ec.value() == boost::asio::ssl::error::stream_truncated);
         }
 
         bool is_redirect_code(const status_code_t& code) {

@@ -6,6 +6,7 @@
 #include <memory>
 #include <future>
 #include <unordered_map>
+#include <map>
 #include <vector>
 
 #include <boost/optional.hpp>

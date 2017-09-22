@@ -247,11 +247,12 @@ namespace crequests {
             string_t redirect() {
                 std::ostringstream out;
 
-                auto found = request.uri.path().value().find_last_of("/");
+                const auto found = request.uri.path().value().find_last_of("/");
                 size_t n {};
                 try {
                     if (found != string_t::npos)
-                        n = std::strtoul(request.uri.path().value().substr(found+1).c_str(), nullptr, 0);
+                        n = std::strtoul(
+                            request.uri.path().value().substr(found+1).c_str(), nullptr, 0);
                 } catch (...) {
                 }
 
@@ -275,7 +276,7 @@ namespace crequests {
                 auto splitted = split(request.uri.path().value(), '/');
                 if (splitted.size() != 4)
                     return _404();
-                
+
                 const auto user = splitted.at(2);
                 const auto passwd = splitted.at(3);
 
@@ -283,9 +284,10 @@ namespace crequests {
                 if (request.headers.count("Authorization"))
                     auth = request.headers.at("Authorization");
 
-                auto found = auth.find("Basic ");
+                const auto found = auth.find("Basic ");
                 if (found == string_t::npos)
                     return _404();
+
                 auth = auth.substr(found + 6);
                 auth = b64decode(auth);
 
@@ -312,12 +314,13 @@ namespace crequests {
             string_t delay() {
                 std::ostringstream out;
 
-                auto request_path = request.uri.path().value();
-                auto ind = request_path.find_last_of("/");
+                const auto request_path = request.uri.path().value();
+                const auto ind = request_path.find_last_of("/");
                 if (ind == string_t::npos or ind == request_path.size())
                     return _404();
 
-                auto n = std::strtoul(request_path.substr(ind + 1).c_str(), nullptr, 0);
+                const auto n =
+                    std::strtoul(request_path.substr(ind + 1).c_str(), nullptr, 0);
                 std::this_thread::sleep_for(seconds_t{n});
 
                 out << "HTTP/1.1 200 OK\r\n";
@@ -599,9 +602,9 @@ namespace crequests {
     }
 
     void server_t::do_accept() {
-        auto stream = std::make_shared<stream_t>(io_service, is_ssl);
+        const auto stream = std::make_shared<stream_t>(io_service, is_ssl);
         
-        auto callback = [this, stream](ec_t ec) {
+        const auto callback = [this, stream](ec_t ec) {
             if (not acceptor.is_open())
                 return;
             

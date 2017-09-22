@@ -125,8 +125,9 @@ TEST(Api, BasicAuth) {
     std::thread thread([&server](){server.run();});
     
     service_t service;
-    auto auth = "my_user:my_passwd"_auth;
-    auto response = Get(service, "https://127.0.0.1:4433/basic_auth/my_user/my_passwd", auth);
+    const auto auth = "my_user:my_passwd"_auth;
+    const auto response =
+        Get(service, "https://127.0.0.1:4433/basic_auth/my_user/my_passwd", auth);
     
     EXPECT_EQ(response->status_code().value(), 200);
     EXPECT_FALSE(response->error());
@@ -182,9 +183,9 @@ TEST(Api, Cookies) {
               "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
               "cookie2\n\n");
     EXPECT_EQ(response->headers().to_string(),
-              "Connection: close\r\n"
               "Server: requests-server\r\n"
               "Content-Type: text/html; charset=UTF-8\r\n"
+              "Connection: close\r\n"
               "Set-Cookie: cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\r\n"
               "Set-Cookie: cookie2\r\n\r\n");
     EXPECT_EQ(response->cookies().get("127.0.0.1", "/cookies").to_string(),
@@ -215,12 +216,12 @@ TEST(Api, Session) {
     EXPECT_EQ(response->request().make_request(),
               "GET /cookies HTTP/1.1\r\n"
               "Host: 127.0.0.1\r\n"
-              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
+              "Connection: keep-alive\r\n"
+              "Accept: */*\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-              "AppleWebKit/537.36 (KHTML, like Gecko) "
-              "Chrome/47.0.2526.106 Safari/537.36\r\n"
-              "Connection: keep-alive\r\n\r\n");
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
     EXPECT_EQ(response->request().cookies().to_string(), "");
     EXPECT_EQ(response->cookies().to_string(),
               "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
@@ -243,12 +244,12 @@ TEST(Api, Session) {
               "GET /cookies HTTP/1.1\r\n"
               "Cookies: cookie1; cookie2; \r\n"
               "Host: 127.0.0.1\r\n"
-              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
+              "Connection: keep-alive\r\n"
+              "Accept: */*\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-              "AppleWebKit/537.36 (KHTML, like Gecko) "
-              "Chrome/47.0.2526.106 Safari/537.36\r\n"
-              "Connection: keep-alive\r\n\r\n");
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
     EXPECT_EQ(response->request().cookies().to_string(),
               "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
               "cookie2\n\n");

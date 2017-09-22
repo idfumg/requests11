@@ -219,14 +219,13 @@ TEST(UriPrepare, ParametersFromUrlOverrideCurrent) {
     uri.prepare();
     
     EXPECT_EQ(uri.url(),
-              "http://google.com:80/asd/"
-              "?b=2&a=1&qweqwe=bbbb&123123=a#fragment"_url);
+              "http://google.com:80/asd/?b=2&a=1&123123=a&qweqwe=bbbb#fragment"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
     EXPECT_EQ(uri.port(), "80"_port);
     EXPECT_EQ(uri.path(), "/asd/"_path);
     EXPECT_EQ(uri.fragment(), "fragment"_fragment);
-    EXPECT_EQ(uri.query(), "b=2&a=1&qweqwe=bbbb&123123=a"_query);
+    EXPECT_EQ(uri.query(), "b=2&a=1&123123=a&qweqwe=bbbb"_query);
 }
 
 TEST(UriPrepare, ParamsOverrideAndAppendedToQueryParams) {
@@ -242,8 +241,8 @@ TEST(UriPrepare, ParamsOverrideAndAppendedToQueryParams) {
     uri.params(params);
     uri.prepare();
     
-    EXPECT_EQ(uri.url(), "http://google.com:80/?c=3&d=4&b=2&a=1"_url);
-    EXPECT_EQ(uri.query(), "c=3&d=4&b=2&a=1"_query);
+    EXPECT_EQ(uri.url(), "http://google.com:80/?c=3&d=4&a=1&b=2"_url);
+    EXPECT_EQ(uri.query(), "c=3&d=4&a=1&b=2"_query);
 }
 
 TEST(UriPrepare, DefaultHttpProtocolAndPort) {

@@ -109,9 +109,9 @@ TEST(ConnectionGood,  ReadHeadersNoDataExists) {
     EXPECT_EQ(response->error().code(), error_code_t::SUCCESS);
     EXPECT_EQ(
         response->headers().to_string(),
-        "Connection: close\r\n"
         "Content-Type: text/html; charset=UTF-8\r\n"
-        "Server: requests-server\r\n\r\n");
+        "Server: requests-server\r\n"
+        "Connection: close\r\n\r\n");
 
     server.stop();
     thread.join();
@@ -129,8 +129,8 @@ TEST(ConnectionGood,  ReadHeadersWithData) {
         response->headers().to_string(),
         "Connection: close\r\n"
         "Content-Type: text/html; charset=UTF-8\r\n"
-        "Server: requests-server\r\n"
-        "Content-Length: 9\r\n\r\n");
+        "Content-Length: 9\r\n"
+        "Server: requests-server\r\n\r\n");
 
     server.stop();
     thread.join();

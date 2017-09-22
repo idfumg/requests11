@@ -410,7 +410,8 @@ namespace crequests {
             if (cookie_path.back() == '/')
                 return true;
 
-            if (req_path.at(cookie_path.size()) == '/')
+            if ((req_path.size() > cookie_path.size() && req_path.at(cookie_path.size()) == '/') ||
+                (cookie_path.size() == req_path.size() && req_path.at(cookie_path.size()-1) == '/'))
                 return true;
             
             return false;

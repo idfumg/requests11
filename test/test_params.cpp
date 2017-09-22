@@ -27,5 +27,5 @@ TEST(Params, Update) {
     auto params2 = params_t {{"c", "3"}, {"d", "4"}};
     params1.update(params2);
     
-    EXPECT_EQ(params1.to_string(), "c=3&d=4&b=2&a=1");
+    EXPECT_EQ(params1.to_string(), "c=3&d=4&a=1&b=2");
 }
