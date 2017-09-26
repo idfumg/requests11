@@ -6,8 +6,8 @@
 
 namespace crequests {
 
-    declare_string(login);
-    declare_string(password);
+    declare_string(login)
+    declare_string(password)
     
     using pair_t = std::pair<login_t, password_t>;
 

@@ -42,8 +42,8 @@ namespace crequests {
         error_t();
 
         template <class ErrorCodeT>
-        error_t(const error_code_t& error_code, ErrorCodeT&& ec)
-            : error_code(error_code), msg(ec) {}
+        error_t(const error_code_t& error_code_, ErrorCodeT&& ec_)
+            : error_code(error_code_), msg(std::forward<ErrorCodeT>(ec_)) {}
 
         operator bool() const;
         error_code_t code() const;

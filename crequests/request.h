@@ -13,21 +13,21 @@
 namespace crequests {
 
 
-    declare_string(method);
-    declare_number(timeout, size_t);
-    declare_number(store_timeout, size_t);
-    declare_bool(redirect);
-    declare_number(redirect_count, size_t);
-    declare_bool(gzip);
-    declare_string(data);
-    declare_bool(keep_alive);
-    declare_bool(cache_redirects);
-    declare_bool(throw_on_error);
-    declare_bool(always_verify_peer);
-    declare_string(verify_path);
-    declare_string(verify_filename);
-    declare_string(certificate_file);
-    declare_string(private_key_file);
+    declare_string(method)
+    declare_number(timeout, size_t)
+    declare_number(store_timeout, size_t)
+    declare_bool(redirect)
+    declare_number(redirect_count, size_t)
+    declare_bool(gzip)
+    declare_string(data)
+    declare_bool(keep_alive)
+    declare_bool(cache_redirects)
+    declare_bool(throw_on_error)
+    declare_bool(always_verify_peer)
+    declare_string(verify_path)
+    declare_string(verify_filename)
+    declare_string(certificate_file)
+    declare_string(private_key_file)
 
     
     const headers_t DEFAULT_HEADERS {

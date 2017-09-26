@@ -18,7 +18,7 @@ namespace crequests {
 
 
     bool is_url_encoded(const string_t& value) {
-        for (auto&& c : value)
+        for (const auto& c : value)
             if (not (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~'))
                 return true;
         return false;
@@ -29,14 +29,14 @@ namespace crequests {
         out.fill('0');
         out << std::hex;
 
-        for (auto&& c : value) {
+        for (const auto& c : value) {
             if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
                 out << c;
                 continue;
             }
 
             out << std::uppercase;
-            out << '%' << std::setw(2) << short((unsigned char) c);
+            out << '%' << std::setw(2) << static_cast<short>(static_cast<unsigned char>(c));
             out << std::nouppercase;
         }
 
@@ -195,7 +195,7 @@ namespace crequests {
     }
 
     std::time_t max_time() {
-        auto time_point =
+        const auto time_point =
             std::chrono::system_clock::now() + std::chrono::hours(24*365);
         return std::chrono::system_clock::to_time_t(time_point);
     }

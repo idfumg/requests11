@@ -10,12 +10,12 @@
 
 namespace crequests {
 
-    declare_number(http_major, unsigned short);
-    declare_number(http_minor, unsigned short);
-    declare_number(status_code, unsigned int);
-    declare_string(status_message);
-    declare_string(raw);
-    declare_string(content);
+    declare_number(http_major, unsigned short)
+    declare_number(http_minor, unsigned short)
+    declare_number(status_code, unsigned int)
+    declare_string(status_message)
+    declare_string(raw)
+    declare_string(content)
     
     class response_t {
     public:

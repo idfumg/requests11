@@ -8,7 +8,7 @@
 
 namespace crequests {
 
-    declare_number(dispose_timeout, size_t);
+    declare_number(dispose_timeout, size_t)
 
     class service_t : std::enable_shared_from_this<service_t> {
     public:

@@ -102,8 +102,8 @@ namespace crequests {
     };
 
 
-    session_impl_t::session_impl_t(service_t& service)
-        : service(service)
+    session_impl_t::session_impl_t(service_t& service_)
+        : service(service_)
     {
         
     }

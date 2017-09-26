@@ -45,12 +45,12 @@ namespace crequests {
         dispose_timeout_t dispose_timeout { 1 };
     };
 
-    service_t::service_data_t::service_data_t(const dispose_timeout_t& dispose_timeout)
-        : dispose_timeout(dispose_timeout)
+    service_t::service_data_t::service_data_t(const dispose_timeout_t& dispose_timeout_)
+        : dispose_timeout(dispose_timeout_)
     {}
 
-    service_t::service_data_t::service_data_t(dispose_timeout_t&& dispose_timeout)
-        : dispose_timeout(std::move(dispose_timeout))
+    service_t::service_data_t::service_data_t(dispose_timeout_t&& dispose_timeout_)
+        : dispose_timeout(std::move(dispose_timeout_))
     {}
 
     service_t::service_data_t::~service_data_t() {

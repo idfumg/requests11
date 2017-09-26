@@ -195,16 +195,16 @@ namespace crequests {
         headers_t headers;
     };
 
-    conn_impl_t::conn_impl_t(service_t& service, const request_t& request)
-        : service(service),
+    conn_impl_t::conn_impl_t(service_t& service_, const request_t& request_)
+        : service(service_),
           strand(service.get_service()),
-          stream(service.get_service(), request),
+          stream(service.get_service(), request_),
           resolver(service.get_service()),
           timeout_timer(service.get_service()),
           dispose_timer(service.get_service()),
           promise(),
           future{promise.get_future()},
-          response(std::make_shared<response_t>(request)),
+          response(std::make_shared<response_t>(request_)),
           m_is_reused(false),
           state{error_code_t::INIT},
           parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)}
@@ -212,10 +212,10 @@ namespace crequests {
         
     }
 
-    conn_impl_t::conn_impl_t(service_t& service,
-                             const request_t& request,
+    conn_impl_t::conn_impl_t(service_t& service_,
+                             const request_t& request_,
                              const connection_t& connection)
-        : service(service),
+        : service(service_),
           strand(service.get_service()),
           stream(std::move(connection.pimpl->stream)),
           resolver(service.get_service()),
@@ -223,7 +223,7 @@ namespace crequests {
           dispose_timer(service.get_service()),
           promise(),
           future{promise.get_future()},
-          response(std::make_shared<response_t>(request)),
+          response(std::make_shared<response_t>(request_)),
           m_is_reused(true),
           state{error_code_t::INIT},
           parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)}
@@ -401,8 +401,8 @@ namespace crequests {
     void conn_impl_t::connect(const resolver_t::iterator& endpoint) {
         auto self = shared_from_this();
         auto callback = [this, self](const ec_t& ec,
-                                     const resolver_t::iterator& endpoint) {
-            on_connect(ec, endpoint);
+                                     const resolver_t::iterator& endpoint_) {
+            on_connect(ec, endpoint_);
         };
         set_state(error_code_t::CONNECT);
         stream.async_connect(endpoint, strand.wrap(callback));

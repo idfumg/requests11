@@ -130,8 +130,8 @@ namespace crequests {
             http_parser_pause(&parser, 0);
     }
 
-    size_t parser_t::execute(const char* data, size_t length) {
-        size_t nparsed = http_parser_execute(&parser, &settings, data, length);
+    size_t parser_t::execute(const char* data_, size_t length) {
+        size_t nparsed = http_parser_execute(&parser, &settings, data_, length);
         if (parser.http_errno != HPE_OK and parser.http_errno != HPE_PAUSED)
             return 0;
         return nparsed;

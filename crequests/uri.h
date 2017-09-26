@@ -7,13 +7,13 @@
 namespace crequests {
 
 
-    declare_string(url);
-    declare_string(protocol);
-    declare_string(domain);
-    declare_string(port);
-    declare_string(path);
-    declare_string(fragment);
-    declare_string(query);
+    declare_string(url)
+    declare_string(protocol)
+    declare_string(domain)
+    declare_string(port)
+    declare_string(path)
+    declare_string(fragment)
+    declare_string(query)
 
 
     const string_t DEFAULT_PROTOCOL = "http";

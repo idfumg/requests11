@@ -13,7 +13,7 @@
 namespace crequests {
 
     static inline shared_ptr_t<BIO> NewStrBIO(const string_t& str) {
-        BIO* bio = BIO_new_mem_buf(const_cast<char*>(str.data()), (int)str.size());
+        BIO* bio = BIO_new_mem_buf(const_cast<char*>(str.data()), static_cast<int>(str.size()));
         if (bio == NULL)
             throw std::runtime_error("BIO_new_mem_buf failed");
         return shared_ptr_t<BIO>(bio, BIO_vfree);
@@ -144,8 +144,8 @@ namespace crequests {
             }
 
             if (not ssl_certs.empty())
-                for (auto&& cert : ssl_certs)
-                    certs.push_back(NewX509(cert.value()));
+                for (const auto& cert_ : ssl_certs)
+                    certs.push_back(NewX509(cert_.value()));
 
             if (request.is_ssl()) {
                 ssl_socket = create_ssl_socket_client(service,

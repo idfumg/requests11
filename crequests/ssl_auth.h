@@ -7,8 +7,8 @@
 
 namespace crequests {
 
-    declare_string(certificate);
-    declare_string(privatekey);
+    declare_string(certificate)
+    declare_string(privatekey)
 
     using cert_key_t = std::pair<certificate_t, privatekey_t>;
 
