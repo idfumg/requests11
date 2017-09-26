@@ -360,8 +360,8 @@ namespace crequests {
             : public std::enable_shared_from_this<server_session_t> {
         public:
             template <class StreamT>
-            server_session_t(StreamT&& stream)
-                : stream(std::move(stream))
+            server_session_t(StreamT&& stream_)
+                : stream(std::move(stream_))
             {
                 
             }
@@ -573,10 +573,10 @@ namespace crequests {
 
     server_t::server_t(const string_t& address,
                        const string_t& port,
-                       bool is_ssl)
+                       bool is_ssl_)
         : io_service{},
           acceptor{io_service},
-          is_ssl{is_ssl}
+          is_ssl{is_ssl_}
     {
         resolver_t resolver{io_service};
         boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({address, port});
