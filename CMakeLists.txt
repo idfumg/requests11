@@ -8,7 +8,8 @@ option(BUILD_SHARED_LIBS
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-   set(CXXFLAGS "-Wall -Werror -Wextra -O3 -std=c++11 -Wold-style-cast -Wstrict-aliasing -Wshadow -pedantic-errors")
+   set(CXXFLAGS "-Wall -Werror -Wextra -O3 -std=c++11 -Wold-style-cast
+    -Wstrict-aliasing -Wshadow -pedantic-errors -ansi -Weffc++")
 endif()
 
 if (NOT CONFIGURED_ONCE)
