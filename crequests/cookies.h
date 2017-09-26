@@ -50,15 +50,15 @@ namespace crequests {
         string_t to_string() const;
 
     private:
-        string_t m_name;
-        string_t m_value;
-        string_t m_domain;
-        string_t m_path;
-        string_t m_origin_domain;
-        string_t m_origin_path;
-        bool m_is_secure;
-        bool m_is_http_only;
-        std::time_t m_expires;
+        string_t m_name {};
+        string_t m_value {};
+        string_t m_domain {};
+        string_t m_path {};
+        string_t m_origin_domain {};
+        string_t m_origin_path {};
+        bool m_is_secure {};
+        bool m_is_http_only {};
+        std::time_t m_expires {};
     };
 
 
@@ -91,7 +91,7 @@ namespace crequests {
     private:
         using cookies_map =
             std::unordered_map<string_t, cookies_list_t, ihash, iequals>;
-        cookies_map m_cookies_map;
+        cookies_map m_cookies_map {};
     };
 
 

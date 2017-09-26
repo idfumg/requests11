@@ -159,7 +159,7 @@ namespace crequests {
         cache_redirects_t m_cache_redirects { true };
         cookies_t m_cookies {};
         throw_on_error_t m_throw_on_error {false};
-        body_callback_t m_body_callback;
+        body_callback_t m_body_callback {};
         ssl_auth_t m_ssl_auth {};
         ssl_certs_t m_ssl_certs {};
         always_verify_peer_t m_always_verify_peer {false};

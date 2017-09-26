@@ -317,11 +317,11 @@ namespace crequests {
     private:
         tcp_socket_ptr_t tcp_socket { nullptr };
         ssl_socket_ptr_t ssl_socket { nullptr };
-        boost::asio::ssl::stream_base::handshake_type type;
+        boost::asio::ssl::stream_base::handshake_type type{};
 
-        shared_ptr_t<X509> cert;
-        shared_ptr_t<EVP_PKEY> key;
-        vector_t<shared_ptr_t<X509> > certs;
+        shared_ptr_t<X509> cert {};
+        shared_ptr_t<EVP_PKEY> key {};
+        vector_t<shared_ptr_t<X509> > certs {};
     };
 
 } /* namespace crequests */

@@ -207,7 +207,13 @@ namespace crequests {
           response(std::make_shared<response_t>(request_)),
           m_is_reused(false),
           state{error_code_t::INIT},
-          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)}
+          request_buf{},
+          response_buf{},
+          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)},
+          header_field{},
+          content_length{},
+          raw{},
+          headers{}
     {
         
     }
@@ -226,7 +232,13 @@ namespace crequests {
           response(std::make_shared<response_t>(request_)),
           m_is_reused(true),
           state{error_code_t::INIT},
-          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)}
+          request_buf{},
+          response_buf{},
+          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)},
+          header_field{},
+          content_length{},
+          raw{},
+          headers{}
     {
         response->redirects(connection.get().get()->redirects());
     }

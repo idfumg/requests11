@@ -72,14 +72,14 @@ namespace crequests {
         void set_defaults();
 
     private:
-        url_t m_url;
-        protocol_t m_protocol;
-        domain_t m_domain;
-        port_t m_port;
-        path_t m_path;
-        fragment_t m_fragment;
-        query_t m_query;
-        params_t m_params;
+        url_t m_url {};
+        protocol_t m_protocol {};
+        domain_t m_domain {};
+        port_t m_port {};
+        path_t m_path {};
+        fragment_t m_fragment {};
+        query_t m_query {};
+        params_t m_params {};
         bool m_is_valid {false};
     };
 

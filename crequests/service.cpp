@@ -40,8 +40,8 @@ namespace crequests {
         work_ptr_t work { std::make_shared<work_t>(ioservice) };
         strand_t strand { ioservice };
         timer__t dispose_timer { ioservice };
-        std::list<session_ptr_t> sessions;
-        std::unique_ptr<std::thread> thread;
+        std::list<session_ptr_t> sessions {};
+        std::unique_ptr<std::thread> thread {};
         dispose_timeout_t dispose_timeout { 1 };
     };
 

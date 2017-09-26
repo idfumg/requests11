@@ -97,8 +97,8 @@ namespace crequests {
         
     private:
         service_t& service;
-        request_t request;
-        connection_ptr_t connection;
+        request_t request {};
+        connection_ptr_t connection {};
     };
 
 

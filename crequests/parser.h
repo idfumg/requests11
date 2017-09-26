@@ -53,8 +53,8 @@ namespace crequests {
         void unpause();
 
     private:
-        http_parser parser;
-        http_parser_settings settings;
+        http_parser parser {};
+        http_parser_settings settings {};
 
     public:
         struct data_t {

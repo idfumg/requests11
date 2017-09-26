@@ -54,9 +54,9 @@ namespace crequests {
             }
         
         public:
-            uri_t uri;
-            method_t method;
-            headers_t headers;
+            uri_t uri {};
+            method_t method {};
+            headers_t headers {};
         };
 
         class server_response_t {
@@ -353,7 +353,7 @@ namespace crequests {
         
         public:
             headers_t headers {SERVER_DEFAULT_HEADERS};
-            server_request_t request;
+            server_request_t request {};
         };
 
         class server_session_t
@@ -563,10 +563,10 @@ namespace crequests {
 
         private:
             stream_t stream;
-            streambuf_t request_buf;
-            streambuf_t response_buf;
-            server_request_t request;
-            server_response_t response;
+            streambuf_t request_buf {};
+            streambuf_t response_buf {};
+            server_request_t request {};
+            server_response_t response {};
         };
 
     } /* anonymous namespace */
