@@ -159,8 +159,8 @@ TEST(Api, Query) {
     std::thread thread([&server](){server.run();});
     
     service_t service;
-    auto params = "123=abc&qwe=!@#$%^*()/;-=+.,<>?"_params;
-    auto response = Get(service, "127.0.0.1:8080/params", params);
+    const auto params = "123=abc&qwe=!@#$%^*()/;-=+.,<>?"_params;
+    const auto response = Get(service, "127.0.0.1:8080/params", params);
     
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");

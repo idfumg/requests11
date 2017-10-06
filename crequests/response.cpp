@@ -285,7 +285,47 @@ namespace crequests {
     request_t& response_t::request() {
         return m_pimpl->m_request;
     }
-    
+
+    http_major_t& response_t::http_major() {
+        return m_pimpl->m_http_major;
+    }
+
+    http_minor_t& response_t::http_minor() {
+        return m_pimpl->m_http_minor;
+    }
+
+    status_code_t& response_t::status_code() {
+        return m_pimpl->m_status_code;
+    }
+
+    status_message_t& response_t::status_message() {
+        return m_pimpl->m_status_message;
+    }
+
+    raw_t& response_t::raw() {
+        return m_pimpl->m_raw;
+    }
+
+    error_t& response_t::error() {
+        return m_pimpl->m_error;
+    }
+
+    headers_t& response_t::headers() {
+        return m_pimpl->m_headers;
+    }
+
+    redirect_count_t& response_t::redirect_count() {
+        return m_pimpl->m_redirect_count;
+    }
+
+    content_t& response_t::content() {
+        return const_cast<content_t&>(content());
+    }
+
+    redirects_t& response_t::redirects() {
+        return m_pimpl->m_redirects;
+    }
+
     cookies_t& response_t::cookies() {
         return m_pimpl->m_cookies;
     }
@@ -297,7 +337,7 @@ namespace crequests {
 
 
     std::ostream& operator<<(std::ostream& out, const response_t& response) {
-        out << "Response: "
+        out << "Response: " << "[" << response.error() << "]\n"
             << "HTTP/"
             << response.http_major() << "."
             << response.http_minor() << " "

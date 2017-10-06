@@ -68,6 +68,16 @@ namespace crequests {
         const cookies_t& cookies() const;
 
         request_t& request();
+        http_major_t& http_major();
+        http_minor_t& http_minor();
+        status_code_t& status_code();
+        status_message_t& status_message();
+        raw_t& raw();
+        error_t& error();
+        headers_t& headers();
+        redirect_count_t& redirect_count();
+        content_t& content();
+        redirects_t& redirects();
         cookies_t& cookies();
 
     private:
