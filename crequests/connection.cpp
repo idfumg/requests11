@@ -124,7 +124,7 @@ namespace crequests {
     public:
         void start();
         void restart();
-        future_t<response_ptr_t> get() const;
+        future_t<response_t> get() const;
         bool is_expired() const;
 
     private:
@@ -178,16 +178,16 @@ namespace crequests {
         resolver_t resolver;
         timer__t timeout_timer;
         timer__t dispose_timer;
-        promise_t<response_ptr_t> promise;
-        future_t<response_ptr_t> future;
-        response_ptr_t response;
+        promise_t<response_t> promise;
+        future_t<response_t> future;
+        response_t response;
         bool m_is_reused;
         error_code_t state;
 
         streambuf_t request_buf;
         streambuf_t response_buf;
 
-        shared_ptr_t<parser_t> parser;
+        parser_t* parser {nullptr};
 
         string_t header_field;
         size_t content_length {0};
@@ -204,12 +204,12 @@ namespace crequests {
           dispose_timer(service.get_service()),
           promise(),
           future{promise.get_future()},
-          response(std::make_shared<response_t>(request_)),
+          response(request_),
           m_is_reused(false),
           state{error_code_t::INIT},
           request_buf{},
           response_buf{},
-          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)},
+          parser{new parser_t(parser_t::parser_type_t::RESPONSE)},
           header_field{},
           content_length{},
           raw{},
@@ -229,22 +229,26 @@ namespace crequests {
           dispose_timer(service.get_service()),
           promise(),
           future{promise.get_future()},
-          response(std::make_shared<response_t>(request_)),
+          response(request_),
           m_is_reused(true),
           state{error_code_t::INIT},
           request_buf{},
           response_buf{},
-          parser{std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE)},
+          parser{new parser_t(parser_t::parser_type_t::RESPONSE)},
           header_field{},
           content_length{},
           raw{},
           headers{}
     {
-        response->redirects(connection.get().get()->redirects());
+        response.redirects(connection.get().get().redirects());
     }
 
-    conn_impl_t::~conn_impl_t() {
-
+    conn_impl_t::~conn_impl_t()
+    {
+        if (parser) {
+            delete parser;
+            parser = nullptr;
+        }
     }
 
 
@@ -272,10 +276,10 @@ namespace crequests {
                                 unsigned short major,
                                 unsigned short minor,
                                 unsigned int code) {
-            response->http_major(http_major_t{major});
-            response->http_minor(http_minor_t{minor});
-            response->status_code(status_code_t{code});
-            response->status_message(status_message_t{string_t(at, length)});
+            response.http_major(http_major_t{major});
+            response.http_minor(http_minor_t{minor});
+            response.status_code(status_code_t{code});
+            response.status_message(status_message_t{string_t(at, length)});
             parser->pause();
         };
 
@@ -292,9 +296,9 @@ namespace crequests {
             string_t header_value(at, length);
             if (tolower(header_field) == "set-cookie") {
                 auto cookie = cookie_t::from_string(header_value);
-                cookie.origin_domain(response->request().uri().domain().value());
-                cookie.origin_path(response->request().uri().path().value());
-                response->cookies().add(cookie);
+                cookie.origin_domain(response.request().uri().domain().value());
+                cookie.origin_path(response.request().uri().path().value());
+                response.cookies().add(cookie);
             }
             headers.insert(header_field, std::move(header_value));
             header_field.clear();
@@ -304,15 +308,15 @@ namespace crequests {
 
         auto headers_complete_fn = [this](ssize_t content_len) {
             content_length = content_len;
-            response->headers(std::move(headers));
+            response.headers(std::move(headers));
             parser->pause();
         };
 
         parser->bind_cb(parser_t::HEADERS_COMPLETE, headers_complete_fn);
 
         auto body_fn = [this](const char* at, size_t length) {
-            if (response->request().body_callback())
-                response->request().body_callback()(at, length, error_t{});
+            if (response.request().body_callback())
+                response.request().body_callback()(at, length, error_t{});
             else
                 raw.value().append(at, length);
             parser->pause();
@@ -328,7 +332,7 @@ namespace crequests {
         parser->bind_cb(parser_t::CHUNK_HEADER, chunk_header_fn);
     }
 
-    future_t<response_ptr_t> conn_impl_t::get() const {
+    future_t<response_t> conn_impl_t::get() const {
         return future;
     }
 
@@ -350,17 +354,21 @@ namespace crequests {
 
     void conn_impl_t::restart() {
         stream.cancel();
-        stream = stream_t(service.get_service(), response->request());
-        parser = std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE);
+        stream = stream_t(service.get_service(), response.request());
+        if (parser) {
+            delete parser;
+            parser = nullptr;
+        }
+        parser = new parser_t(parser_t::parser_type_t::RESPONSE);
         m_is_reused = false;
         start();
     }
 
     void conn_impl_t::setup_timeout() {
         timeout_timer.expires_from_now(
-            seconds_t(response->request().timeout().value()));
+            seconds_t(response.request().timeout().value()));
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec) {
+        const auto callback = [this, self](const ec_t& ec) {
             on_timeout(ec);
         };
         timeout_timer.async_wait(strand.wrap(callback));
@@ -373,9 +381,9 @@ namespace crequests {
 
     void conn_impl_t::setup_dispose_timer() {
         dispose_timer.expires_from_now(
-            seconds_t(response->request().store_timeout().value()));
+            seconds_t(response.request().store_timeout().value()));
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec) {
+        const auto callback = [this, self](const ec_t& ec) {
             on_dispose_timer(ec);
         };
         dispose_timer.async_wait(strand.wrap(callback));
@@ -388,11 +396,11 @@ namespace crequests {
 
     void conn_impl_t::resolve() {
         const resolver_t::query query {
-            response->request().uri().domain().value(),
-            response->request().uri().port().value()
+            response.request().uri().domain().value(),
+            response.request().uri().port().value()
         };
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec,
+        const auto callback = [this, self](const ec_t& ec,
                                      const resolver_t::iterator& endpoint) {
             on_resolve(ec, endpoint);
         };
@@ -412,7 +420,7 @@ namespace crequests {
 
     void conn_impl_t::connect(const resolver_t::iterator& endpoint) {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec,
+        const auto callback = [this, self](const ec_t& ec,
                                      const resolver_t::iterator& endpoint_) {
             on_connect(ec, endpoint_);
         };
@@ -427,14 +435,14 @@ namespace crequests {
             return;
         }
         
-        if (response->request().keep_alive())
+        if (response.request().keep_alive())
             stream.set_option(boost::asio::socket_base::keep_alive { true });
         handshake();
     }
 
     void conn_impl_t::handshake() {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec) {
+        const auto callback = [this, self](const ec_t& ec) {
             on_handshake(ec);
         };
         set_state(error_code_t::HANDSHAKE);
@@ -452,11 +460,11 @@ namespace crequests {
 
     void conn_impl_t::write() {
         std::ostream request_stream(&request_buf);
-        request_stream << response->request().make_request();
+        request_stream << response.request().make_request();
         request_stream.flush();
 
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t length) {
             on_write(ec, length);
         };
         set_state(error_code_t::WRITE);
@@ -479,7 +487,7 @@ namespace crequests {
 
     void conn_impl_t::read_status() {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t& length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t& length) {
             on_read_status(ec, length);
         };
         set_state(error_code_t::READ_STATUS);
@@ -507,7 +515,7 @@ namespace crequests {
 
     void conn_impl_t::read_headers() {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t& length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t& length) {
             on_read_headers(ec, length);
         };
         set_state(error_code_t::READ_HEADERS);
@@ -532,9 +540,9 @@ namespace crequests {
     }
 
     void conn_impl_t::read_content() {
-        if (response->headers().count("Content-Length"))
+        if (response.headers().count("Content-Length"))
             read_content_length();
-        else if (response->headers().contains("Transfer-Encoding", "chunked"))
+        else if (response.headers().contains("Transfer-Encoding", "chunked"))
             read_chunk_header();
         else
             read_until_eof();
@@ -542,7 +550,7 @@ namespace crequests {
 
     void conn_impl_t::read_content_length() {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t length) {
             on_read_content_length(ec, length);
         };
         set_state(error_code_t::READ_CONTENT_LENGTH);
@@ -580,7 +588,7 @@ namespace crequests {
         }
         
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t length) {
             on_read_chunk_header(ec, length);
         };
         
@@ -619,7 +627,7 @@ namespace crequests {
         set_state(error_code_t::READ_CHUNK_DATA);
         
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec,
+        const auto callback = [this, self](const ec_t& ec,
                                      const std::size_t length) {
             on_read_chunk_data(ec, length);
         };
@@ -639,7 +647,7 @@ namespace crequests {
             return;
         }
         
-        raw.value().reserve(response->raw().value().size() + content_length);
+        raw.value().reserve(response.raw().value().size() + content_length);
         if (not execute_parser()) {
             set_error(error_code_t::READ_CHUNK_DATA_ERROR, "chunk data error");
             return;
@@ -650,7 +658,7 @@ namespace crequests {
 
     void conn_impl_t::read_until_eof() {
         auto self = shared_from_this();
-        auto callback = [this, self](const ec_t& ec, const std::size_t length) {
+        const auto callback = [this, self](const ec_t& ec, const std::size_t length) {
             on_read_until_eof(ec, length);
         };
         set_state(error_code_t::READ_UNTIL_EOF);
@@ -694,12 +702,12 @@ namespace crequests {
     void conn_impl_t::end() {
         resolver.cancel();
         timeout_timer.cancel();
-        if (response->request().final_callback())
-            response->request().final_callback()(*response);
+        if (response.request().final_callback())
+            response.request().final_callback()(response);
         setup_dispose_timer();
 
-        if (response->request().keep_alive()) {
-            if (response->headers().contains("Connection", "close")) {
+        if (response.request().keep_alive()) {
+            if (response.headers().contains("Connection", "close")) {
                 stream.cancel();
                 stream.close();
             }
@@ -708,56 +716,60 @@ namespace crequests {
             stream.cancel();
         }
 
-        response->raw(std::move(raw));
+        response.raw(std::move(raw));
 
-        if (response->request().body_callback())
-            response->request().body_callback()(nullptr, 0, response->error());
+        if (response.request().body_callback())
+            response.request().body_callback()(nullptr, 0, response.error());
 
-        if (response->error() and response->request().throw_on_error())
-            promise.set_exception(std::make_exception_ptr(response->error()));
+        if (response.error() and response.request().throw_on_error())
+            promise.set_exception(std::make_exception_ptr(response.error()));
         else
             promise.set_value(response);
     }
 
     void conn_impl_t::perform_redirect() {
-        if (is_redirect_exhausted(*response)) {
+        if (is_redirect_exhausted(response)) {
             set_error(error_code_t::REDIRECT_EXHAUSTED, "redirect exhausted");
             return;
         }
         
-        if (not response->headers().count("Location")) {
+        if (not response.headers().count("Location")) {
             set_error(error_code_t::REDIRECT_ERROR, "no Location.");
             return;
         }
 
-        auto redirects = std::move(response->redirects());
+        auto redirects = std::move(response.redirects());
 
         if (redirects.empty())
-            redirects.add(*response);
+            redirects.add(response);
         
-        auto redirect_count = std::move(response->redirect_count());
-        auto request = std::move(response->request());
+        auto redirect_count = std::move(response.redirect_count());
+        auto request = std::move(response.request());
 
         redirect_count.value()++;
-        request.uri(uri_t::from_string(response->headers().at("Location")));
+        request.uri(uri_t::from_string(response.headers().at("Location")));
         request.prepare();
         
-        response = std::make_shared<response_t>(std::move(request));
-        response->redirect_count(std::move(redirect_count));
-        response->redirects(std::move(redirects));
+        response = response_t{std::move(request)};
+        response.redirect_count(std::move(redirect_count));
+        response.redirects(std::move(redirects));
 
-        redirects = response->redirects();
-        redirects.add(*response);
-        response->redirects(std::move(redirects));
+        redirects = response.redirects();
+        redirects.add(response);
+        response.redirects(std::move(redirects));
 
-        stream = stream_t(service.get_service(), response->request());
+        stream = stream_t(service.get_service(), response.request());
 
         if (request_buf.size() > 0)
             request_buf.consume(request_buf.size());
         if (response_buf.size() > 0)
             response_buf.consume(response_buf.size());
 
-        parser = std::make_shared<parser_t>(parser_t::parser_type_t::RESPONSE);
+        if (parser) {
+            delete parser;
+            parser = nullptr;
+        }
+        parser = new parser_t(parser_t::parser_type_t::RESPONSE);
         prepare_parser();
 
         resolve();
@@ -768,7 +780,7 @@ namespace crequests {
             return;
 
         set_state(new_state);
-        response->error(error_t(new_state, msg));
+        response.error(error_t(new_state, msg));
         end();
     }
 
@@ -779,8 +791,8 @@ namespace crequests {
     }
 
     void conn_impl_t::set_success() {
-        if (is_redirect_code(response->status_code())) {
-            if (response->request().redirect()) {
+        if (is_redirect_code(response.status_code())) {
+            if (response.request().redirect()) {
                 perform_redirect();
                 return;
             }
@@ -788,7 +800,7 @@ namespace crequests {
         else {
             if (not in_final_state()) {
                 set_state(error_code_t::SUCCESS);
-                response->error(error_t(state, "success"));
+                response.error(error_t(state, "success"));
                 end();
             }
         }
@@ -796,13 +808,13 @@ namespace crequests {
 
     void conn_impl_t::set_timeout() {
         if (in_final_state()) {
-            if (not response->request().keep_alive())
+            if (not response.request().keep_alive())
                 stream.close();
             return;
         }
 
         set_state(error_code_t::TIMEOUT);
-        response->error(error_t(state, "timeout"));
+        response.error(error_t(state, "timeout"));
         end();
     }
 
@@ -872,12 +884,7 @@ namespace crequests {
         
     }
 
-    connection_t::~connection_t() {
-        
-    }
-
-    connection_t::connection_t(const connection_t& connection)
-        : pimpl {connection.pimpl}
+    connection_t::~connection_t()
     {
         
     }
@@ -885,12 +892,21 @@ namespace crequests {
     connection_t::connection_t(connection_t&& connection)
         : pimpl {std::move(connection.pimpl)}
     {
-        
+        connection.pimpl = nullptr;
     }
 
     connection_t& connection_t::operator=(const connection_t& connection) {
         if (this != &connection) {
             pimpl = connection.pimpl;
+        }
+
+        return *this;
+    }
+
+    connection_t& connection_t::operator=(connection_t&& connection) {
+        if (this != &connection) {
+            pimpl = connection.pimpl;
+            connection.pimpl = nullptr;
         }
 
         return *this;
@@ -902,7 +918,7 @@ namespace crequests {
      ************************************************************/
 
 
-    future_t<response_ptr_t> connection_t::get() const {
+    future_t<response_t> connection_t::get() const {
         return pimpl->get();
     }
 

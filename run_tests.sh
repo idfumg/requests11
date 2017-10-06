@@ -1,9 +1,18 @@
 #!/usr/bin/sh
 
-mkdir build
+if [ ! -x build ]; then
+    mkdir build
+fi
+
 cd build
+
 cmake ..
 make -j4
-cp -r ../test/cert test/
-cd test
-./tests
+
+if [ $? -eq 0 ]; then
+    if [ ! -x test/cert ]; then
+        cp -r ../test/cert test/
+    fi
+    cd test
+    ./tests
+fi

@@ -24,6 +24,7 @@ namespace crequests {
         response_t(const response_t& response);
         response_t(response_t&& response);
         response_t& operator=(const response_t& response);
+        response_t& operator=(response_t&& response);
         ~response_t();
 
     public:
@@ -70,21 +71,9 @@ namespace crequests {
         cookies_t& cookies();
 
     private:
-        request_t m_request {};
-        http_major_t m_http_major {};
-        http_minor_t m_http_minor {};
-        status_code_t m_status_code {};
-        status_message_t m_status_message {};
-        headers_t m_headers {};
-        raw_t m_raw {};
-        error_t m_error {};
-        redirect_count_t m_redirect_count {};
-        mutable content_t m_content {};
-        redirects_t m_redirects {};
-        cookies_t m_cookies {};
+        friend class response_impl_t;
+        shared_ptr_t<class response_impl_t> m_pimpl;
     };
-
-    using response_ptr_t = shared_ptr_t<response_t>;
 
     std::ostream& operator<<(std::ostream& out, const response_t& response);
     

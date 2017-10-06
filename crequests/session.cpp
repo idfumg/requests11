@@ -8,7 +8,8 @@ namespace crequests {
     namespace {
 
         bool can_reuse_connection(const request_t& request,
-                                  const request_t& last_request) {
+                                  const request_t& last_request) noexcept
+        {
             return
                 last_request.uri().domain() == request.uri().domain() and
                 last_request.uri().port() == request.uri().port() and
@@ -26,9 +27,14 @@ namespace crequests {
     class session_impl_t {
     public:
         session_impl_t(service_t& service);
+        session_impl_t(const session_impl_t& session) = default;
+        session_impl_t(session_impl_t&& session) = default;
+        session_impl_t& operator=(const session_impl_t& session) = default;
+        session_impl_t& operator=(session_impl_t&& session) = default;
+        ~session_impl_t();
 
     public:
-        asyncresponse_ptr_t Send();
+        asyncresponse_t Send();
 
         void set_option(const string_t& url);
         void set_option(const url_t& url);
@@ -98,7 +104,7 @@ namespace crequests {
     private:
         service_t& service;
         request_t request {};
-        connection_ptr_t connection {};
+        connection_t* connection {nullptr};
     };
 
 
@@ -106,6 +112,14 @@ namespace crequests {
         : service(service_)
     {
         
+    }
+    
+    session_impl_t::~session_impl_t()
+    {
+        if (connection) {
+            delete connection;
+            connection = nullptr;
+        }
     }
 
 
@@ -366,28 +380,28 @@ namespace crequests {
      ***************************************************************************/
 
 
-    asyncresponse_ptr_t session_impl_t::Send() {
+    asyncresponse_t session_impl_t::Send() {
         if (connection and request.cache_redirects())
-            skip_redirects(*connection->get().get());
+            skip_redirects(connection->get().get());
         else
             request.prepare();
 
         if (not connection or
-            not can_reuse_connection(request, connection->get().get()->request())) {
-            connection =
-                std::make_shared<connection_t>(service, request);
+            not can_reuse_connection(request, connection->get().get().request()))
+        {
+            connection = new connection_t(service, request);
         }
-        else {
+        else
+        {
             auto cookies = request.cookies();
-            cookies.update(connection->get().get()->cookies());
+            cookies.update(connection->get().get().cookies());
             request.cookies(cookies);
-            connection =
-                std::make_shared<connection_t>(service, request, *connection);
+            connection = new connection_t(service, request, *connection);
         }
 
         connection->start();
 
-        return std::make_shared<asyncresponse_t>(connection->get());
+        return asyncresponse_t{connection->get()};
     }
 
     void session_impl_t::skip_redirects(const response_t& response) {
@@ -425,7 +439,7 @@ namespace crequests {
     session_t::session_t(session_t&& session)
         : pimpl {std::move(session.pimpl)}
     {
-        
+        session.pimpl = nullptr;
     }
 
     session_t::~session_t()
@@ -436,6 +450,15 @@ namespace crequests {
     session_t& session_t::operator=(const session_t& session) {
         if (this != &session) {
             pimpl = session.pimpl;
+        }
+
+        return *this;
+    }
+
+    session_t& session_t::operator=(session_t&& session) {
+        if (this != &session) {
+            pimpl = std::move(session.pimpl);
+            session.pimpl = nullptr;
         }
 
         return *this;
@@ -699,72 +722,72 @@ namespace crequests {
      ***************************************************************************/
 
 
-    asyncresponse_ptr_t session_t::AsyncGet() {
+    asyncresponse_t session_t::AsyncGet() {
         pimpl->set_option(method_t {"GET"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncPost() {
+    asyncresponse_t session_t::AsyncPost() {
         pimpl->set_option(method_t {"POST"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncPut() {
+    asyncresponse_t session_t::AsyncPut() {
         pimpl->set_option(method_t {"PUT"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncPatch() {
+    asyncresponse_t session_t::AsyncPatch() {
         pimpl->set_option(method_t {"PATCH"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncDelete() {
+    asyncresponse_t session_t::AsyncDelete() {
         pimpl->set_option(method_t {"DELETE"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncHead() {
+    asyncresponse_t session_t::AsyncHead() {
         pimpl->set_option(method_t {"HEAD"});
         return AsyncSend();
     }
 
-    asyncresponse_ptr_t session_t::AsyncSend() {
+    asyncresponse_t session_t::AsyncSend() {
         return pimpl->Send();
     }
 
-    response_ptr_t session_t::Get() {
+    response_t session_t::Get() {
         pimpl->set_option(method_t {"GET"});
         return Send();
     }
 
-    response_ptr_t session_t::Post() {
+    response_t session_t::Post() {
         pimpl->set_option(method_t {"POST"});
         return Send();
     }
 
-    response_ptr_t session_t::Put() {
+    response_t session_t::Put() {
         pimpl->set_option(method_t {"PUT"});
         return Send();
     }
 
-    response_ptr_t session_t::Patch() {
+    response_t session_t::Patch() {
         pimpl->set_option(method_t {"PATCH"});
         return Send();
     }
 
-    response_ptr_t session_t::Delete() {
+    response_t session_t::Delete() {
         pimpl->set_option(method_t {"DELETE"});
         return Send();
     }
 
-    response_ptr_t session_t::Head() {
+    response_t session_t::Head() {
         pimpl->set_option(method_t {"HEAD"});
         return Send();
     }
 
-    response_ptr_t session_t::Send() {
-        return pimpl->Send()->get();
+    response_t session_t::Send() {
+        return pimpl->Send().get();
     }
 
 

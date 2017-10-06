@@ -9,21 +9,20 @@ namespace crequests {
 
     class asyncresponse_t {
     public:
-        asyncresponse_t(const future_t<response_ptr_t>& future);
-        asyncresponse_t(future_t<response_ptr_t>&& future);
+        asyncresponse_t(const future_t<response_t>& future);
+        asyncresponse_t(future_t<response_t>&& future);
         asyncresponse_t(const asyncresponse_t& response);
         asyncresponse_t(asyncresponse_t&& response);
         asyncresponse_t& operator=(const asyncresponse_t& response);
         ~asyncresponse_t();
 
     public:
-        response_ptr_t get() const;
+        response_t get() const;
 
     private:
-        future_t<response_ptr_t> m_future;
+        friend class asyncrequest_impl_t;
+        shared_ptr_t<class asyncrequest_impl_t> m_pimpl;
     };
-
-    using asyncresponse_ptr_t = shared_ptr_t<asyncresponse_t>;
 
     
 } /* namespace crequests */

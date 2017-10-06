@@ -20,9 +20,10 @@ namespace crequests {
         connection_t(const connection_t& connection);
         connection_t(connection_t&& connection);
         connection_t& operator=(const connection_t& connection);
+        connection_t& operator=(connection_t&& connection);
 
     public:
-        future_t<response_ptr_t> get() const;
+        future_t<response_t> get() const;
         void start();
         bool is_expired() const;
 
@@ -31,7 +32,6 @@ namespace crequests {
         shared_ptr_t<class conn_impl_t> pimpl;
     };
 
-    using connection_ptr_t = shared_ptr_t<connection_t>;
 
 } /* namespace crequests */
 

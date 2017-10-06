@@ -29,7 +29,7 @@ namespace crequests {
 
     public:
         ioservice_t& get_service();
-        void add_session(const session_ptr_t& session);
+        session_t& add_session(const session_t& session);
         void set_dispose_timer();
         void on_dispose_timer(const ec_t& ec);
         void start();
@@ -40,7 +40,7 @@ namespace crequests {
         work_ptr_t work { std::make_shared<work_t>(ioservice) };
         strand_t strand { ioservice };
         timer__t dispose_timer { ioservice };
-        std::list<session_ptr_t> sessions {};
+        std::list<session_t> sessions {};
         std::unique_ptr<std::thread> thread {};
         dispose_timeout_t dispose_timeout { 1 };
     };
@@ -77,14 +77,15 @@ namespace crequests {
         return ioservice;
     }
 
-    void service_t::service_data_t::add_session(const session_ptr_t& session) {
+    session_t& service_t::service_data_t::add_session(const session_t& session) {
         sessions.push_back(session);
+        return sessions.back();
     }
 
     void service_t::service_data_t::set_dispose_timer() {
         dispose_timer.expires_from_now(
             seconds_t{ dispose_timeout.value() });
-        auto callback = [this](const ec_t& ec) {
+        const auto callback = [this](const ec_t& ec) {
             on_dispose_timer(ec);
         };
         dispose_timer.async_wait(strand.wrap(callback));
@@ -94,9 +95,9 @@ namespace crequests {
         if (ec)
             return;
         
-        auto&& it = sessions.begin();
+        auto it = sessions.begin();
         while (it != sessions.end()) {
-            if ((*it)->is_expired()) {
+            if (it->is_expired()) {
                 auto it_to_erase = it;
                 it++;
                 sessions.erase(it_to_erase);
@@ -126,19 +127,46 @@ namespace crequests {
     {
         data->start();
     }
+
+    service_t::service_t(const service_t& service)
+        : data{service.data}
+    {
+
+    }
+
+    service_t::service_t(service_t&& service)
+        : data{std::move(service.data)}
+    {
+        service.data = nullptr;
+    }
+
+    service_t& service_t::operator=(const service_t& service)
+    {
+        if (this != &service) {
+            data = service.data;
+        }
+        return *this;
+    }
+
+    service_t& service_t::operator=(service_t&& service)
+    {
+        if (this != &service) {
+            data = service.data;
+            service.data = nullptr;
+        }
+        return *this;
+    }
     
     service_t::~service_t() {
-        
+
     }
 
     ioservice_t& service_t::get_service() {
         return data->get_service();
     }
 
-    session_ptr_t service_t::new_session() {
-        auto session = std::make_shared<session_t>(*this);
-        data->add_session(session);
-        return session;
+    session_t& service_t::new_session() {
+        return data->add_session(session_t(*this));
     }
 
     void service_t::run() {

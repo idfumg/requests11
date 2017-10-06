@@ -15,24 +15,25 @@ namespace crequests {
         session_t(const session_t& session);
         session_t(session_t&& session);
         session_t& operator=(const session_t& session);
+        session_t& operator=(session_t&& session);
         ~session_t();
 
     public:
-        asyncresponse_ptr_t AsyncGet();
-        asyncresponse_ptr_t AsyncPost();
-        asyncresponse_ptr_t AsyncPut();
-        asyncresponse_ptr_t AsyncPatch();
-        asyncresponse_ptr_t AsyncDelete();
-        asyncresponse_ptr_t AsyncHead();
-        asyncresponse_ptr_t AsyncSend();
+        asyncresponse_t AsyncGet();
+        asyncresponse_t AsyncPost();
+        asyncresponse_t AsyncPut();
+        asyncresponse_t AsyncPatch();
+        asyncresponse_t AsyncDelete();
+        asyncresponse_t AsyncHead();
+        asyncresponse_t AsyncSend();
 
-        response_ptr_t Get();
-        response_ptr_t Post();
-        response_ptr_t Put();
-        response_ptr_t Patch();
-        response_ptr_t Delete();
-        response_ptr_t Head();
-        response_ptr_t Send();
+        response_t Get();
+        response_t Post();
+        response_t Put();
+        response_t Patch();
+        response_t Delete();
+        response_t Head();
+        response_t Send();
 
         void set_option(const string_t& url);
         void set_option(const url_t& url);
@@ -103,7 +104,6 @@ namespace crequests {
         shared_ptr_t<class session_impl_t> pimpl;
     };
 
-    using session_ptr_t = shared_ptr_t<session_t>;
     
 } /* namespace crequests */
 

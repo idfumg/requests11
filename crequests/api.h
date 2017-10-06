@@ -10,98 +10,98 @@ namespace crequests {
 
 
     template <class SessionT, class Head>
-    void set_option(SessionT&& session, Head&& head) {
-        session->set_option(std::forward<Head>(head));
+    void set_option(SessionT& session, Head&& head) {
+        session.set_option(std::forward<Head>(head));
     }
     
     template <class SessionT, class Head, class... Tail>
-    void set_option(SessionT&& session, Head&& head, Tail&&... tail) {
+    void set_option(SessionT& session, Head&& head, Tail&&... tail) {
         set_option(session, std::forward<Head>(head));
         set_option(session, std::forward<Tail>(tail)...);
     }
 
     template <class ServiceT, class... Args>
-    response_ptr_t Get(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Get(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Get();
+        return session.Get();
     }
 
     template <class ServiceT, class... Args>
-    response_ptr_t Post(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Post(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Post();
+        return session.Post();
     }
     
     template <class ServiceT, class... Args>
-    response_ptr_t Put(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Put(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Put();
+        return session.Put();
     }
 
     template <class ServiceT, class... Args>
-    response_ptr_t Patch(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Patch(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Patch();
+        return session.Patch();
     }
 
     template <class ServiceT, class... Args>
-    response_ptr_t Delete(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Delete(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Delete();
+        return session.Delete();
     }
 
     template <class ServiceT, class... Args>
-    response_ptr_t Head(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    response_t Head(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->Head();
+        return session.Head();
     }
 
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncGet(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncGet(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncGet();
+        return session.AsyncGet();
     }
 
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncPost(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncPost(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncPost();
+        return session.AsyncPost();
     }
     
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncPut(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncPut(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncPut();
+        return session.AsyncPut();
     }
 
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncPatch(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncPatch(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncPatch();
+        return session.AsyncPatch();
     }
 
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncDelete(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncDelete(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncDelete();
+        return session.AsyncDelete();
     }
 
     template <class ServiceT, class... Args>
-    asyncresponse_ptr_t AsyncHead(ServiceT&& service, Args&& ...args) {
-        auto session = service.new_session();
+    asyncresponse_t AsyncHead(ServiceT&& service, Args&& ...args) {
+        auto& session = service.new_session();
         set_option(session, std::forward<Args>(args)...);
-        return session->AsyncHead();
+        return session.AsyncHead();
     }
     
 } /* namespace crequests */
