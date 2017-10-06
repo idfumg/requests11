@@ -8,6 +8,7 @@ TEST(Request, PrepareDefault) {
     request_t request;
     request.domain("google.com"_domain);
     request.url("google.com"_url);
+    request.gzip(gzip_t{false});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();
@@ -28,6 +29,7 @@ TEST(Request, PreparePost) {
     request.domain("google.com"_domain);
     request.url("google.com"_url);
     request.method("POST"_method);
+    request.gzip(gzip_t{false});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();
@@ -71,6 +73,7 @@ TEST(Request, PrepareKeepAlive) {
     request.url("google.com"_url);
     request.method("POST"_method);
     request.keep_alive(keep_alive_t{false});
+    request.gzip(gzip_t{false});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();
@@ -92,6 +95,7 @@ TEST(Request, PrepareBasicAuthorization) {
     request.url("google.com"_url);
     request.method("POST"_method);
     request.auth(auth_t{login_t{"user"}, password_t{"passwd"}});
+    request.gzip(gzip_t{false});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();
@@ -115,6 +119,7 @@ TEST(Request, PrepareWithData) {
     request.url("google.com"_url);
     request.method("POST"_method);
     request.data("hellow"_data);
+    request.gzip(gzip_t{false});
     request.prepare();
     std::ostringstream out;
     out << request.make_request();
@@ -167,6 +172,7 @@ TEST(Request, UsingUserDefinedLiteral) {
 
     EXPECT_EQ(request.make_request(),
               "GET / HTTP/1.1\r\n"
+              "Content-Encoding: gzip\r\n"
               "Host: google.com\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"

@@ -202,7 +202,7 @@ TEST(Api, Session) {
     
     service_t service;
     auto& session = service.new_session();
-    set_option(session, "127.0.0.1:8080/cookies", keep_alive_t{true});
+    set_option(session, "127.0.0.1:8080/cookies", keep_alive_t{true}, gzip_t{false});
     auto response = session.Get();
     
     EXPECT_EQ(response.http_major().value(), 1);
@@ -266,7 +266,7 @@ TEST(Api, SessionWithDifferentArguments) {
     std::thread thread([&server](){server.run();});
     
     service_t service;
-    auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
+    const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
     auto response = session.Get();
     
     EXPECT_EQ(response.http_major().value(), 1);
@@ -308,7 +308,7 @@ TEST(Api, SessionAsyncGet) {
     std::thread thread([&server](){server.run();});
     
     service_t service;
-    auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
+    const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
     auto response = session.AsyncGet().get();
     
     EXPECT_EQ(response.http_major().value(), 1);
@@ -331,14 +331,12 @@ TEST(Api, SessionAsyncGetTwoRequests) {
     service_t service;
     auto& session = service.new_session( "127.0.0.1:8080/", timeout_t{0});
     
-    auto response_future = session.AsyncGet();
-    auto response = response_future.get();
+    auto response = session.AsyncGet().get();
     
     EXPECT_EQ(response.error().code_to_string(), "TIMEOUT");
 
     set_option(session, timeout_t{5});
-    auto response2_future = session.AsyncGet();
-    response = response2_future.get();
+    response = session.AsyncGet().get();
     
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
 

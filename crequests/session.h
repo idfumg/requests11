@@ -19,21 +19,21 @@ namespace crequests {
         ~session_t();
 
     public:
-        asyncresponse_t AsyncGet();
-        asyncresponse_t AsyncPost();
-        asyncresponse_t AsyncPut();
-        asyncresponse_t AsyncPatch();
-        asyncresponse_t AsyncDelete();
-        asyncresponse_t AsyncHead();
-        asyncresponse_t AsyncSend();
+        asyncresponse_t AsyncGet() const;
+        asyncresponse_t AsyncPost() const;
+        asyncresponse_t AsyncPut() const;
+        asyncresponse_t AsyncPatch() const;
+        asyncresponse_t AsyncDelete() const;
+        asyncresponse_t AsyncHead() const;
+        asyncresponse_t AsyncSend() const;
 
-        response_t Get();
-        response_t Post();
-        response_t Put();
-        response_t Patch();
-        response_t Delete();
-        response_t Head();
-        response_t Send();
+        response_t Get() const;
+        response_t Post() const;
+        response_t Put() const;
+        response_t Patch() const;
+        response_t Delete() const;
+        response_t Head() const;
+        response_t Send() const;
 
         void set_option(const string_t& url);
         void set_option(const url_t& url);

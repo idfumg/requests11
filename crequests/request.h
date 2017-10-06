@@ -150,7 +150,7 @@ namespace crequests {
         store_timeout_t m_store_timeout { 60 };
         redirect_t m_redirect { true };
         redirect_count_t m_redirect_count { 10 };
-        gzip_t m_gzip { false };
+        gzip_t m_gzip { true };
         data_t m_data {};
         keep_alive_t m_keep_alive { true };
         headers_t m_headers { DEFAULT_HEADERS };

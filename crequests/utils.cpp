@@ -47,7 +47,7 @@ namespace crequests {
         std::ostringstream out;
         short c = 0;
 
-        for (auto&& it = value.begin(); it != value.end(); ++it) {
+        for (auto it = value.begin(); it != value.end(); ++it) {
             if (*it == '%' and it + 1 != value.end() and it + 2 != value.end()) {
                 std::istringstream in(string_t(it + 1, it + 3));
                 in >> std::hex >> c;

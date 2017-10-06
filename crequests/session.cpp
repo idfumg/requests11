@@ -722,71 +722,71 @@ namespace crequests {
      ***************************************************************************/
 
 
-    asyncresponse_t session_t::AsyncGet() {
+    asyncresponse_t session_t::AsyncGet() const {
         pimpl->set_option(method_t {"GET"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncPost() {
+    asyncresponse_t session_t::AsyncPost() const {
         pimpl->set_option(method_t {"POST"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncPut() {
+    asyncresponse_t session_t::AsyncPut() const {
         pimpl->set_option(method_t {"PUT"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncPatch() {
+    asyncresponse_t session_t::AsyncPatch() const {
         pimpl->set_option(method_t {"PATCH"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncDelete() {
+    asyncresponse_t session_t::AsyncDelete() const {
         pimpl->set_option(method_t {"DELETE"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncHead() {
+    asyncresponse_t session_t::AsyncHead() const {
         pimpl->set_option(method_t {"HEAD"});
         return AsyncSend();
     }
 
-    asyncresponse_t session_t::AsyncSend() {
+    asyncresponse_t session_t::AsyncSend() const {
         return pimpl->Send();
     }
 
-    response_t session_t::Get() {
+    response_t session_t::Get() const {
         pimpl->set_option(method_t {"GET"});
         return Send();
     }
 
-    response_t session_t::Post() {
+    response_t session_t::Post() const {
         pimpl->set_option(method_t {"POST"});
         return Send();
     }
 
-    response_t session_t::Put() {
+    response_t session_t::Put() const {
         pimpl->set_option(method_t {"PUT"});
         return Send();
     }
 
-    response_t session_t::Patch() {
+    response_t session_t::Patch() const {
         pimpl->set_option(method_t {"PATCH"});
         return Send();
     }
 
-    response_t session_t::Delete() {
+    response_t session_t::Delete() const {
         pimpl->set_option(method_t {"DELETE"});
         return Send();
     }
 
-    response_t session_t::Head() {
+    response_t session_t::Head() const {
         pimpl->set_option(method_t {"HEAD"});
         return Send();
     }
 
-    response_t session_t::Send() {
+    response_t session_t::Send() const {
         return pimpl->Send().get();
     }
 

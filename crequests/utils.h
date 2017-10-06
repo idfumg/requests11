@@ -2,7 +2,6 @@
 #define UTILS_H
 
 #include "types.h"
-#include <sstream>
 
 namespace crequests {
 

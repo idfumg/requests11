@@ -26,13 +26,16 @@ int main(int argc, char** argv) {
         std::vector<asyncresponse_t> asyncresponses;
         service_t service;
 
-        for (const auto& url : urls)
+        for (const auto& url : urls) {
             asyncresponses.push_back(AsyncGet(service, url));
+        }
 
-        for (const auto& asyncresponse : asyncresponses)
+        for (const auto& asyncresponse : asyncresponses) {
             print(asyncresponse.get().error());
+        }
     
-        auto& session = service.new_session("http://www.vk.com", timeout_t{3});
+        const auto& session =
+            service.new_session("http://www.vk.com", timeout_t{3}, gzip_t{true});
 
         {
             const auto r = session.Get();
