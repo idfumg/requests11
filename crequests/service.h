@@ -1,10 +1,10 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
-#include "macros.h"
-#include "types.h"
-#include "session.h"
 #include "boost_asio_fwd.h"
+#include "macros.h"
+#include "session.h"
+#include "types.h"
 
 namespace crequests {
 
@@ -30,9 +30,9 @@ namespace crequests {
             set_option(session, std::forward<Args>(args)...);
             return session;
         }
-        
+
         session_t& new_session();
-    
+
     private:
         class service_data_t;
         shared_ptr_t<class service_data_t> data;

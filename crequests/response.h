@@ -1,12 +1,12 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
-#include "macros.h"
+#include "cookies.h"
 #include "error.h"
 #include "headers.h"
-#include "request.h"
+#include "macros.h"
 #include "redirects.h"
-#include "cookies.h"
+#include "request.h"
 
 namespace crequests {
 

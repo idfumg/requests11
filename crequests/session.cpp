@@ -1,6 +1,6 @@
-#include "session.h"
 #include "connection.h"
 #include "service.h"
+#include "session.h"
 
 namespace crequests {
 
@@ -100,7 +100,7 @@ namespace crequests {
 
         bool is_expired() const;
         void skip_redirects(const response_t& response);
-        
+
     private:
         service_t& service;
         request_t request {};
@@ -111,9 +111,9 @@ namespace crequests {
     session_impl_t::session_impl_t(service_t& service_)
         : service(service_)
     {
-        
+
     }
-    
+
     session_impl_t::~session_impl_t()
     {
         if (connection) {
@@ -427,13 +427,13 @@ namespace crequests {
     session_t::session_t(service_t& service)
         : pimpl {std::make_shared<session_impl_t>(service)}
     {
-        
+
     }
 
     session_t::session_t(const session_t& session)
         : pimpl {session.pimpl}
     {
-        
+
     }
 
     session_t::session_t(session_t&& session)
@@ -444,7 +444,7 @@ namespace crequests {
 
     session_t::~session_t()
     {
-        
+
     }
 
     session_t& session_t::operator=(const session_t& session) {

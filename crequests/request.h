@@ -1,35 +1,35 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
-#include "macros.h"
-#include "types.h"
-#include "headers.h"
-#include "uri.h"
 #include "auth.h"
 #include "cookies.h"
+#include "headers.h"
+#include "macros.h"
 #include "ssl_auth.h"
 #include "ssl_certs.h"
+#include "types.h"
+#include "uri.h"
 
 namespace crequests {
 
 
-    declare_string(method)
-    declare_number(timeout, size_t)
-    declare_number(store_timeout, size_t)
-    declare_bool(redirect)
-    declare_number(redirect_count, size_t)
-    declare_bool(gzip)
-    declare_string(data)
-    declare_bool(keep_alive)
-    declare_bool(cache_redirects)
-    declare_bool(throw_on_error)
     declare_bool(always_verify_peer)
-    declare_string(verify_path)
-    declare_string(verify_filename)
+    declare_bool(cache_redirects)
+    declare_bool(gzip)
+    declare_bool(keep_alive)
+    declare_bool(redirect)
+    declare_bool(throw_on_error)
+    declare_number(redirect_count, size_t)
+    declare_number(store_timeout, size_t)
+    declare_number(timeout, size_t)
     declare_string(certificate_file)
+    declare_string(data)
     declare_string(private_key_file)
+    declare_string(verify_filename)
+    declare_string(verify_path)
+    declare_string(method)
 
-    
+
     const headers_t DEFAULT_HEADERS {
         {"Accept", "*/*"},
         {"Accept-Encoding", "gzip, deflate"},
@@ -95,7 +95,7 @@ namespace crequests {
         void verify_filename(const verify_filename_t& verify_filename);
         void certificate_file(const certificate_file_t& certificate_file);
         void private_key_file(const private_key_file_t& private_key_file);
-        
+
         void method(method_t&& method);
         void timeout(timeout_t&& timeout);
         void store_timeout(store_timeout_t&& store_timeout);
@@ -142,7 +142,7 @@ namespace crequests {
         const verify_filename_t& verify_filename() const;
         const certificate_file_t& certificate_file() const;
         const private_key_file_t& private_key_file() const;
-        
+
     private:
         uri_t m_uri {};
         method_t m_method { "GET" };

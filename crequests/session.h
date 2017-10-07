@@ -1,11 +1,11 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "request.h"
-#include "utils.h"
-#include "auth.h"
-#include "response.h"
 #include "asyncresponse.h"
+#include "auth.h"
+#include "request.h"
+#include "response.h"
+#include "utils.h"
 
 namespace crequests {
 
@@ -104,7 +104,7 @@ namespace crequests {
         shared_ptr_t<class session_impl_t> pimpl;
     };
 
-    
+
 } /* namespace crequests */
 
 #endif /* SESSION_H */

@@ -1,5 +1,5 @@
-#include "request.h"
 #include "connection.h"
+#include "request.h"
 #include "utils.h"
 
 #include <iostream>
@@ -9,7 +9,7 @@ namespace crequests {
 
 
     request_t::request_t() {
-        
+
     }
 
     request_t::request_t(const request_t& request)
@@ -37,7 +37,7 @@ namespace crequests {
           m_certificate_file {request.m_certificate_file},
           m_private_key_file {request.m_private_key_file}
     {
-        
+
     }
 
     request_t::request_t(request_t&& request)
@@ -65,7 +65,7 @@ namespace crequests {
           m_certificate_file {std::move(request.m_certificate_file)},
           m_private_key_file {std::move(request.m_private_key_file)}
     {
-        
+
     }
 
     request_t& request_t::operator=(const request_t& request) {
@@ -99,7 +99,7 @@ namespace crequests {
     }
 
     request_t::~request_t() {
-        
+
     }
 
 
@@ -111,7 +111,7 @@ namespace crequests {
     void request_t::uri(const uri_t& uri) {
         m_uri = uri;
     }
-    
+
     void request_t::url(const string_t& url) {
         m_uri.url(url_t{url});
     }
@@ -153,7 +153,7 @@ namespace crequests {
     void request_t::uri(uri_t&& uri) {
         m_uri = std::move(uri);
     }
-    
+
     void request_t::url(string_t&& url) {
         m_uri.url(url_t{std::move(url)});
     }
@@ -482,24 +482,24 @@ namespace crequests {
         assert(not m_method.empty());
         assert(not m_uri.path().empty());
         assert(not m_uri.domain().empty());
-        
+
         std::ostringstream out;
-        
+
         out << m_method << " " << m_uri.path();
-        
+
         if (not m_uri.query().empty())
             out << "?" + m_uri.query().value();
 
         auto cookies =
             m_cookies.get(m_uri.domain().value(), m_uri.path().value());
         auto headers_ = m_headers;
-        
+
         if (not cookies.empty())
             headers_.insert("Cookies", cookies.to_string());
-        
+
         out << " " << "HTTP/1.1\r\n";
         out << headers_.to_string();
-        
+
         if (not m_data.empty()) {
             if (m_gzip)
                 out << compress(m_data.value());

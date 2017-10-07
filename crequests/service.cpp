@@ -1,7 +1,7 @@
-#include "service.h"
-#include "request.h"
-#include "connection.h"
 #include "boost_asio.h"
+#include "connection.h"
+#include "request.h"
+#include "service.h"
 
 #include <thread>
 #include <list>
@@ -90,11 +90,11 @@ namespace crequests {
         };
         dispose_timer.async_wait(strand.wrap(callback));
     }
-    
+
     void service_t::service_data_t::on_dispose_timer(const ec_t& ec) {
         if (ec)
             return;
-        
+
         auto it = sessions.begin();
         while (it != sessions.end()) {
             if (it->is_expired()) {
@@ -119,7 +119,7 @@ namespace crequests {
     service_t::service_t()
         : service_t(dispose_timeout_t { 1 })
     {
-        
+
     }
 
     service_t::service_t(const dispose_timeout_t& dispose_timeout)
@@ -156,7 +156,7 @@ namespace crequests {
         }
         return *this;
     }
-    
+
     service_t::~service_t() {
 
     }

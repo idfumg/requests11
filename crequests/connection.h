@@ -1,9 +1,9 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "types.h"
-#include "error.h"
 #include "boost_asio_fwd.h"
+#include "error.h"
+#include "types.h"
 
 namespace crequests {
 
