@@ -746,8 +746,9 @@ namespace crequests {
 
         auto redirects = std::move(response.redirects());
 
-        if (redirects.empty())
+        if (redirects.get().empty()) {
             redirects.add(response);
+        }
 
         auto redirect_count = std::move(response.redirect_count());
         auto request = std::move(response.request());
@@ -766,10 +767,13 @@ namespace crequests {
 
         stream = stream_t(service.get_service(), response.request());
 
-        if (request_buf.size() > 0)
+        if (request_buf.size() > 0) {
             request_buf.consume(request_buf.size());
-        if (response_buf.size() > 0)
+        }
+
+        if (response_buf.size() > 0) {
             response_buf.consume(response_buf.size());
+        }
 
         if (parser) {
             delete parser;

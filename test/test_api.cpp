@@ -18,7 +18,7 @@ TEST(Api, Default) {
     EXPECT_EQ(response.status_message().value(), "OK");
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     auto headers = response.headers();
     EXPECT_EQ(headers.at("Content-Type"), "text/html; charset=UTF-8");
 
@@ -211,7 +211,7 @@ TEST(Api, Session) {
     EXPECT_EQ(response.status_message().value(), "OK");
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
     EXPECT_EQ(response.request().make_request(),
               "GET /cookies HTTP/1.1\r\n"
@@ -238,7 +238,7 @@ TEST(Api, Session) {
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.error().to_string(), "SUCCESS: success");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
     EXPECT_EQ(response.request().make_request(),
               "GET /cookies HTTP/1.1\r\n"
@@ -275,7 +275,7 @@ TEST(Api, SessionWithDifferentArguments) {
     EXPECT_EQ(response.status_message().value(), "OK");
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
 
     server.stop();
@@ -295,7 +295,7 @@ TEST(Api, AsyncDefault) {
     EXPECT_EQ(response.status_message().value(), "OK");
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     auto headers = response.headers();
     EXPECT_EQ(headers.at("Content-Type"), "text/html; charset=UTF-8");
 
@@ -317,7 +317,7 @@ TEST(Api, SessionAsyncGet) {
     EXPECT_EQ(response.status_message().value(), "OK");
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().size(), 0);
+    EXPECT_EQ(response.redirects().get().size(), 0);
     EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
 
     server.stop();
