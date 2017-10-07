@@ -8,10 +8,10 @@ using namespace crequests;
 TEST(Api, Default) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "http://127.0.0.1:8080/");
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -29,10 +29,10 @@ TEST(Api, Default) {
 TEST(Api, Ip) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "127.0.0.1:8080/ip");
-    
+
     EXPECT_EQ(response.raw().value(), "127.0.0.1");
 
     server.stop();
@@ -42,7 +42,7 @@ TEST(Api, Ip) {
 TEST(Api, NonExistsPath) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "127.0.0.1:8080/abracadabra");
 
@@ -107,10 +107,10 @@ TEST(Api, GzipData) {
 TEST(Api, RedirectsNTimes) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "127.0.0.1:8080/redirect/5");
-    
+
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
@@ -123,15 +123,15 @@ TEST(Api, RedirectsNTimes) {
 TEST(Api, BasicAuth) {
     server_t server{"127.0.0.1", "4433", true};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto auth = "my_user:my_passwd"_auth;
     const auto response =
         Get(service, "https://127.0.0.1:4433/basic_auth/my_user/my_passwd", auth);
-    
+
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
-    EXPECT_EQ(response.content().value(),
+    EXPECT_EQ(response.content(),
               "authenticated: true\n"
               "user: my_user\n"
               "password: my_passwd");
@@ -143,10 +143,10 @@ TEST(Api, BasicAuth) {
 TEST(Api, Timeout) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "127.0.0.1:8080/delay/1", timeout_t{0});
-    
+
     EXPECT_TRUE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "TIMEOUT");
 
@@ -157,14 +157,14 @@ TEST(Api, Timeout) {
 TEST(Api, Query) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto params = "123=abc&qwe=!@#$%^*()/;-=+.,<>?"_params;
     const auto response = Get(service, "127.0.0.1:8080/params", params);
-    
+
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
-    EXPECT_EQ(response.content().value(), "query: qwe=%2521%2540%2523%2524%2525%255E%252A%2528%2529%252F%253B-%253D%252B.%252C%253C%253E%253F&123=abc");
+    EXPECT_EQ(response.content(), "query: qwe=%2521%2540%2523%2524%2525%255E%252A%2528%2529%252F%253B-%253D%252B.%252C%253C%253E%253F&123=abc");
 
     server.stop();
     thread.join();
@@ -173,10 +173,10 @@ TEST(Api, Query) {
 TEST(Api, Cookies) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = Get(service, "127.0.0.1:8080/cookies");
-    
+
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.cookies().to_string(),
@@ -199,12 +199,12 @@ TEST(Api, Cookies) {
 TEST(Api, Session) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto& session = service.new_session();
     set_option(session, "127.0.0.1:8080/cookies", keep_alive_t{true}, gzip_t{false});
     auto response = session.Get();
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -227,10 +227,10 @@ TEST(Api, Session) {
               "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
               "cookie2\n\n");
 
-    
+
     response = session.Get();
 
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -264,11 +264,11 @@ TEST(Api, Session) {
 TEST(Api, SessionWithDifferentArguments) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
     auto response = session.Get();
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -285,10 +285,10 @@ TEST(Api, SessionWithDifferentArguments) {
 TEST(Api, AsyncDefault) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto response = AsyncGet(service, "http://127.0.0.1:8080/").get();
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -306,11 +306,11 @@ TEST(Api, AsyncDefault) {
 TEST(Api, SessionAsyncGet) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
     auto response = session.AsyncGet().get();
-    
+
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
     EXPECT_EQ(response.status_code().value(), 200);
@@ -327,17 +327,17 @@ TEST(Api, SessionAsyncGet) {
 TEST(Api, SessionAsyncGetTwoRequests) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     auto& session = service.new_session( "127.0.0.1:8080/", timeout_t{0});
-    
+
     auto response = session.AsyncGet().get();
-    
+
     EXPECT_EQ(response.error().code_to_string(), "TIMEOUT");
 
     set_option(session, timeout_t{5});
     response = session.AsyncGet().get();
-    
+
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
 
     server.stop();

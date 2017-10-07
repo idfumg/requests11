@@ -16,7 +16,7 @@ namespace crequests {
     declare_string(status_message)
     declare_string(raw)
     declare_string(content)
-    
+
     class response_t {
     public:
         response_t(const request_t& request);
@@ -63,7 +63,7 @@ namespace crequests {
         const error_t& error() const;
         const headers_t& headers() const;
         const redirect_count_t& redirect_count() const;
-        const content_t& content() const;
+        const string_t& content() const;
         const redirects_t& redirects() const;
         const cookies_t& cookies() const;
 
@@ -76,7 +76,7 @@ namespace crequests {
         error_t& error();
         headers_t& headers();
         redirect_count_t& redirect_count();
-        content_t& content();
+        string_t& content();
         redirects_t& redirects();
         cookies_t& cookies();
 
@@ -86,7 +86,7 @@ namespace crequests {
     };
 
     std::ostream& operator<<(std::ostream& out, const response_t& response);
-    
+
 } /* namespace crequests */
 
 #endif /* RESPONSE_H */

@@ -9,13 +9,13 @@ namespace crequests {
         response_impl_t(const request_t& request)
             : m_request {request}
         {
-            
+
         }
 
         response_impl_t(request_t&& request)
             : m_request {std::move(request)}
         {
-            
+
         }
 
         response_impl_t(const response_t& response)
@@ -32,7 +32,7 @@ namespace crequests {
               m_redirects {response.m_pimpl->m_redirects},
               m_cookies {response.m_pimpl->m_cookies}
         {
-        
+
         }
 
         response_impl_t(response_t&& response)
@@ -49,9 +49,9 @@ namespace crequests {
               m_redirects {std::move(response.m_pimpl->m_redirects)},
               m_cookies {std::move(response.m_pimpl->m_cookies)}
     {
-        
+
     }
-        
+
     public:
         request_t m_request {};
         http_major_t m_http_major {};
@@ -70,25 +70,25 @@ namespace crequests {
     response_t::response_t(const request_t& request)
         : m_pimpl{std::make_shared<response_impl_t>(request)}
     {
-        
+
     }
 
     response_t::response_t(request_t&& request)
         : m_pimpl{std::make_shared<response_impl_t>(std::move(request))}
     {
-        
+
     }
 
     response_t::response_t(const response_t& response)
         : m_pimpl{std::make_shared<response_impl_t>(response)}
     {
-        
+
     }
 
     response_t::response_t(response_t&& response)
         : m_pimpl{std::make_shared<response_impl_t>(std::move(response))}
     {
-        
+
     }
 
     response_t& response_t::operator=(const response_t& response) {
@@ -110,7 +110,7 @@ namespace crequests {
 
     response_t::~response_t()
     {
-        
+
     }
 
 
@@ -263,15 +263,17 @@ namespace crequests {
         return m_pimpl->m_redirect_count;
     }
 
-    const content_t& response_t::content() const {
+    const string_t& response_t::content() const {
         if (m_pimpl->m_content.value().empty() and not m_pimpl->m_raw.empty()) {
-            if (m_pimpl->m_headers.contains("Content-Encoding", "gzip"))
+            if (m_pimpl->m_headers.contains("Content-Encoding", "gzip")) {
                 m_pimpl->m_content = content_t(decompress(m_pimpl->m_raw.value()));
-            else
-                m_pimpl->m_content = content_t(m_pimpl->m_raw.value());
+            }
+            else {
+                return m_pimpl->m_raw.value();
+            }
         }
-        
-        return m_pimpl->m_content;
+
+        return m_pimpl->m_content.value();
     }
 
     const redirects_t& response_t::redirects() const {
@@ -318,8 +320,8 @@ namespace crequests {
         return m_pimpl->m_redirect_count;
     }
 
-    content_t& response_t::content() {
-        return const_cast<content_t&>(content());
+    string_t& response_t::content() {
+        return const_cast<string_t&>(content());
     }
 
     redirects_t& response_t::redirects() {
