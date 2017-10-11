@@ -182,12 +182,12 @@ TEST(Api, Cookies) {
     EXPECT_EQ(response.cookies().to_string(),
               "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
               "cookie2\n\n");
-    EXPECT_EQ(response.headers().to_string(),
+    EXPECT_EQ(response.headers(),
               "Server: requests-server\r\n"
               "Content-Type: text/html; charset=UTF-8\r\n"
               "Connection: close\r\n"
               "Set-Cookie: cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\r\n"
-              "Set-Cookie: cookie2\r\n\r\n");
+              "Set-Cookie: cookie2\r\n\r\n"_headers);
     EXPECT_EQ(response.cookies().get("127.0.0.1", "/cookies").to_string(),
               "cookie1; cookie2; ");
     EXPECT_EQ(response.cookies().get("127.0.0.1", "/").to_string(), "");

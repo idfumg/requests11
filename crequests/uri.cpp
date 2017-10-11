@@ -12,7 +12,7 @@ namespace crequests {
 
     uri_t::uri_t() {
     }
-    
+
     uri_t::uri_t(const uri_t& uri)
         : m_url {uri.m_url},
           m_protocol {uri.m_protocol},
@@ -24,9 +24,9 @@ namespace crequests {
           m_params {uri.m_params},
           m_is_valid {uri.m_is_valid}
     {
-        
+
     }
-    
+
     uri_t::uri_t(uri_t&& uri)
         : m_url {std::move(uri.m_url)},
           m_protocol {std::move(uri.m_protocol)},
@@ -38,7 +38,7 @@ namespace crequests {
           m_params {std::move(uri.m_params)},
           m_is_valid {uri.m_is_valid}
     {
-        
+
     }
 
     uri_t& uri_t::operator=(const uri_t& uri) {
@@ -58,7 +58,7 @@ namespace crequests {
     }
 
     uri_t::~uri_t() {
-        
+
     }
 
 
@@ -196,7 +196,7 @@ namespace crequests {
             str = "http://" + str;
 
         uri_t uri;
-        
+
         struct http_parser_url u;
         auto rv = http_parser_parse_url(str.c_str(), str.size(), 0, &u);
         if (rv != 0) {
@@ -245,14 +245,14 @@ namespace crequests {
         if (not m_query.empty())
             if (is_url_encoded(m_query.value()))
                 m_query = query_t{urldecode(m_query.value())};
-        
+
         if (not uri.query().empty()) {
             query_t query = uri.query();
             if (is_url_encoded(query.value()))
                 query = query_t{urldecode(query.value())};
             m_query.value().append("&").append(query.value());
         }
-        
+
         m_params.update(uri.params());
     }
 
@@ -276,7 +276,7 @@ namespace crequests {
                 query = query_t{urldecode(query.value())};
             m_query.value().append("&").append(query.value());
         }
-        
+
         m_params.update(uri.params());
     }
 
@@ -286,8 +286,10 @@ namespace crequests {
 
         auto new_params = params_t::from_string(m_query.value());
         new_params.update(m_params);
+        m_params = new_params;
+
         m_query = query_t(new_params.to_string());
-        
+
         set_defaults();
         m_url = make_url();
     }
@@ -317,7 +319,7 @@ namespace crequests {
 
         if (m_port.empty())
             m_port = port_t{DEFAULT_PORT};
-        
+
         if (m_path.empty())
             m_path = path_t(DEFAULT_PATH);
     }

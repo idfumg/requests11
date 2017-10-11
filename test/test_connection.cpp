@@ -24,7 +24,7 @@ TEST(ConnectionBad,  ConnectError) {
 TEST(ConnectionBad,  ServerDoesNotReadHeadersAndCloseSocket) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "http://127.0.0.1:8080/read_status_error");
 
@@ -37,7 +37,7 @@ TEST(ConnectionBad,  ServerDoesNotReadHeadersAndCloseSocket) {
 TEST(ConnectionBad,  ServerReadHeadersAndCloseSocket) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_wrong_status");
 
@@ -50,7 +50,7 @@ TEST(ConnectionBad,  ServerReadHeadersAndCloseSocket) {
 TEST(ConnectionBad,  ReadStatusDataError) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_wrong_status_data");
 
@@ -63,7 +63,7 @@ TEST(ConnectionBad,  ReadStatusDataError) {
 TEST(ConnectionBad,  ReadHeadersError) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_wrong_headers");
 
@@ -76,7 +76,7 @@ TEST(ConnectionBad,  ReadHeadersError) {
 TEST(ConnectionBad,  ContentLengthError) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_wrong_content");
 
@@ -89,7 +89,7 @@ TEST(ConnectionBad,  ContentLengthError) {
 TEST(ConnectionBad,  ChunkDataError) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_wrong_chunk_data");
 
@@ -102,16 +102,16 @@ TEST(ConnectionBad,  ChunkDataError) {
 TEST(ConnectionGood,  ReadHeadersNoDataExists) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080");
 
     EXPECT_EQ(response.error().code(), error_code_t::SUCCESS);
     EXPECT_EQ(
-        response.headers().to_string(),
+        response.headers(),
         "Content-Type: text/html; charset=UTF-8\r\n"
         "Server: requests-server\r\n"
-        "Connection: close\r\n\r\n");
+        "Connection: close\r\n\r\n"_headers);
 
     server.stop();
     thread.join();
@@ -120,17 +120,17 @@ TEST(ConnectionGood,  ReadHeadersNoDataExists) {
 TEST(ConnectionGood,  ReadHeadersWithData) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_response_with_data");
 
     EXPECT_EQ(response.error().code(), error_code_t::SUCCESS);
     EXPECT_EQ(
-        response.headers().to_string(),
+        response.headers(),
         "Connection: close\r\n"
         "Content-Type: text/html; charset=UTF-8\r\n"
         "Content-Length: 9\r\n"
-        "Server: requests-server\r\n\r\n");
+        "Server: requests-server\r\n\r\n"_headers);
 
     server.stop();
     thread.join();
@@ -139,7 +139,7 @@ TEST(ConnectionGood,  ReadHeadersWithData) {
 TEST(ConnectionGood,  GetContentLength) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_content_length");
 
@@ -155,7 +155,7 @@ TEST(ConnectionGood,  GetContentLength) {
 TEST(ConnectionGood,  GetBigContentLength) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_big_content_length");
 
@@ -171,7 +171,7 @@ TEST(ConnectionGood,  GetBigContentLength) {
 TEST(ConnectionGood,  GetBigChunks) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_big_chunks");
 
@@ -185,7 +185,7 @@ TEST(ConnectionGood,  GetBigChunks) {
 TEST(ConnectionGood,  GetBigUntilEof) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/get_big_until_eof");
 
@@ -199,7 +199,7 @@ TEST(ConnectionGood,  GetBigUntilEof) {
 TEST(ConnectionGood,  GetBigUntilEofSsl) {
     server_t server{"127.0.0.1", "4433", true};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     const auto response = Get(service, "https://127.0.0.1:4433/get_big_until_eof");
 
@@ -213,7 +213,7 @@ TEST(ConnectionGood,  GetBigUntilEofSsl) {
 TEST(ConnectionBad, ThrowOnError) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     try {
         Get(service, "http://127.0.0.1:8080/read_status_error",
@@ -229,7 +229,7 @@ TEST(ConnectionBad, ThrowOnError) {
 TEST(ConnectionGood,  GetContentLengthWithBodyCallback) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     std::string result;
     body_callback_t callback = [&result](const char* at, size_t length,
@@ -251,7 +251,7 @@ TEST(ConnectionGood,  GetContentLengthWithBodyCallback) {
 TEST(ConnectionBad, ErrorThroughBodyCallback) {
     server_t server{"127.0.0.1", "8080"};
     std::thread thread([&server](){server.run();});
-    
+
     service_t service;
     body_callback_t callback = [](const char* at, size_t length,
                                   const crequests::error_t& e) {
