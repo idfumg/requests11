@@ -10,7 +10,7 @@ TEST(Api, Default) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "http://127.0.0.1:8080/");
+    const auto response = Get(service, "http://127.0.0.1:8080/");
 
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
@@ -19,7 +19,7 @@ TEST(Api, Default) {
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
     EXPECT_EQ(response.redirects().get().size(), 0);
-    auto headers = response.headers();
+    const auto& headers = response.headers();
     EXPECT_EQ(headers.at("Content-Type"), "text/html; charset=UTF-8");
 
     server.stop();
@@ -31,7 +31,7 @@ TEST(Api, Ip) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/ip");
+    const auto response = Get(service, "127.0.0.1:8080/ip");
 
     EXPECT_EQ(response.raw().value(), "127.0.0.1");
 
@@ -44,7 +44,7 @@ TEST(Api, NonExistsPath) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/abracadabra");
+    const auto response = Get(service, "127.0.0.1:8080/abracadabra");
 
     EXPECT_EQ(response.status_code().value(), 404);
     EXPECT_FALSE(response.error());
@@ -59,8 +59,8 @@ TEST(Api, UserAgent) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto headers = "User-Agent: requests"_headers;
-    auto response = Get(service, "127.0.0.1:8080/user-agent", headers);
+    const auto headers = "User-Agent: requests"_headers;
+    const auto response = Get(service, "127.0.0.1:8080/user-agent", headers);
 
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
@@ -75,7 +75,7 @@ TEST(Api, GetRequestData) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-     auto response = Get(service, "127.0.0.1:8080/get?a=1&b=2");
+    const auto response = Get(service, "127.0.0.1:8080/get?a=1&b=2");
 
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
@@ -93,7 +93,7 @@ TEST(Api, GzipData) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/gzip");
+    const auto response = Get(service, "127.0.0.1:8080/gzip");
 
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
@@ -109,7 +109,7 @@ TEST(Api, RedirectsNTimes) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/redirect/5");
+    const auto response = Get(service, "127.0.0.1:8080/redirect/5");
 
     EXPECT_EQ(response.status_code().value(), 200);
     EXPECT_FALSE(response.error());
@@ -145,7 +145,7 @@ TEST(Api, Timeout) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/delay/1", timeout_t{0});
+    const auto response = Get(service, "127.0.0.1:8080/delay/1", timeout_t{0});
 
     EXPECT_TRUE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "TIMEOUT");
@@ -175,7 +175,7 @@ TEST(Api, Cookies) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = Get(service, "127.0.0.1:8080/cookies");
+    const auto response = Get(service, "127.0.0.1:8080/cookies");
 
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
@@ -267,7 +267,7 @@ TEST(Api, SessionWithDifferentArguments) {
 
     service_t service;
     const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
-    auto response = session.Get();
+    const auto response = session.Get();
 
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
@@ -287,7 +287,7 @@ TEST(Api, AsyncDefault) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto response = AsyncGet(service, "http://127.0.0.1:8080/").get();
+    const auto response = AsyncGet(service, "http://127.0.0.1:8080/").get();
 
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);
@@ -296,7 +296,8 @@ TEST(Api, AsyncDefault) {
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
     EXPECT_EQ(response.redirects().get().size(), 0);
-    auto headers = response.headers();
+
+    const auto& headers = response.headers();
     EXPECT_EQ(headers.at("Content-Type"), "text/html; charset=UTF-8");
 
     server.stop();
@@ -309,7 +310,7 @@ TEST(Api, SessionAsyncGet) {
 
     service_t service;
     const auto& session = service.new_session("127.0.0.1:8080/", keep_alive_t{true});
-    auto response = session.AsyncGet().get();
+    const auto response = session.AsyncGet().get();
 
     EXPECT_EQ(response.http_major().value(), 1);
     EXPECT_EQ(response.http_minor().value(), 1);

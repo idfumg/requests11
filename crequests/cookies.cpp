@@ -26,7 +26,7 @@ namespace crequests {
           m_is_http_only{false},
           m_expires{}
     {
-        
+
     }
 
     cookie_t::cookie_t(const cookie_t& cookie)
@@ -40,7 +40,7 @@ namespace crequests {
           m_is_http_only(cookie.m_is_http_only),
           m_expires(cookie.m_expires)
     {
-        
+
     }
 
     cookie_t::cookie_t(cookie_t&& cookie)
@@ -54,7 +54,7 @@ namespace crequests {
           m_is_http_only(std::move(cookie.m_is_http_only)),
           m_expires(std::move(cookie.m_expires))
     {
-        
+
     }
 
     cookie_t& cookie_t::operator=(const cookie_t& cookie) {
@@ -157,7 +157,7 @@ namespace crequests {
     void cookie_t::origin_domain(string_t&& str) {
         m_origin_domain = std::move(str);
     }
-    
+
     const string_t& cookie_t::name() const {
         return m_name;
     }
@@ -193,7 +193,7 @@ namespace crequests {
     bool cookie_t::is_http_only() const {
         return m_is_http_only;
     }
-    
+
     cookie_t cookie_t::from_string(const string_t& str) {
         cookie_t cookie;
 
@@ -203,13 +203,13 @@ namespace crequests {
             token = trim(token);
             if (token.empty())
                 break;
-            
+
             const auto ind = token.find("=");
             if (ind != string_t::npos) {
                 auto name = token.substr(0, ind);
                 auto value = token.substr(ind + 1);
                 const auto name_lower = tolower(name);
-                
+
                 if (name_lower == "expires") {
                     cookie.expires(string_to_time(value, "%a, %d %b %Y %H:%M:%S %Z"));
                 }
@@ -239,7 +239,7 @@ namespace crequests {
                 }
             }
         }
-        
+
         return cookie;
     }
 
@@ -260,7 +260,7 @@ namespace crequests {
             out << "; Path=" << m_path;
         if (not m_domain.empty())
             out << "; Domain=" << m_domain;
-        
+
         return out.str();
     }
 
@@ -274,7 +274,7 @@ namespace crequests {
             first.path().empty() ? first.origin_path() : first.path();
         const auto second_path =
             second.path().empty() ? second.origin_path() : second.path();
-        
+
         return
             first.name() < second.name() or
             first_domain < second_domain or
@@ -286,7 +286,7 @@ namespace crequests {
         return out;
     }
 
-    
+
     /************************************************************
      * cookies_list_t implementation.
      ************************************************************/
@@ -304,7 +304,7 @@ namespace crequests {
         std::map<string_t, string_t> map;
         for (auto&& cookie : *this)
             map[cookie.name()] = cookie.value();
-        
+
         std::ostringstream out;
         for (auto&& cookie : map) {
             out << cookie.first;
@@ -314,7 +314,7 @@ namespace crequests {
         }
         return out.str();
     }
-    
+
 
     /************************************************************
      * cookies_t implementation.
@@ -327,7 +327,7 @@ namespace crequests {
         bool is_sibling_domain(const int distance) {
             return distance == 0;
         }
-    
+
         bool is_child_domain(const int distance) {
             return distance > 0;
         }
@@ -351,7 +351,7 @@ namespace crequests {
             for (size_t i = 0; i < distance; ++i) {
                 if (is_public_domain(origin))
                     return true;
-            
+
                 auto ind = origin.find(".");
                 if (ind != string_t::npos)
                     origin.replace(0, ind + 1, "");
@@ -367,18 +367,18 @@ namespace crequests {
         bool is_domain_cover(const string_t& domains, string_t origin, size_t distance) {
             if (is_public_domain(domains))
                 return false;
-        
+
             if (is_public_domain_when_walk_through_parents(origin, distance))
                 return false;
 
             return domains == origin;
         }
-    
+
         bool is_domain_matched(const string_t& domains, const string_t& origin) {
             const int distance =
                 std::count(domains.begin(), domains.end(), '.') -
                 std::count(origin.begin(), origin.end(), '.');
-        
+
             if (is_sibling_domain(distance))
                 return domains == origin;
 
@@ -387,7 +387,7 @@ namespace crequests {
 
             if (is_child_domain(distance))
                 return is_domain_cover(origin, domains, std::abs(distance));
-        
+
             return true;
         }
 
@@ -396,10 +396,10 @@ namespace crequests {
             // RFC6265 5.1.4
             const auto is_equal =
                 cookie_path.compare(0, cookie_path.size(), req_path);
-            
+
             if (is_equal == 0)
                 return true;
-            
+
             if (is_equal > 0)
                 return false;
 
@@ -413,7 +413,7 @@ namespace crequests {
             if ((req_path.size() > cookie_path.size() && req_path.at(cookie_path.size()) == '/') ||
                 (cookie_path.size() == req_path.size() && req_path.at(cookie_path.size()-1) == '/'))
                 return true;
-            
+
             return false;
         }
 
@@ -428,83 +428,84 @@ namespace crequests {
                 value.replace(0, ind + 1, "");
         }
 
-        
+
     } /* anonymous namespace */
-    
-    
+
+
     void cookies_t::add(const cookie_t& cookie) {
         auto cookie_domain =
             tolower(
                 cookie.domain().empty() ? cookie.origin_domain() : cookie.domain());
-        
+
         if (is_domain_matched(cookie_domain, tolower(cookie.origin_domain())))
             m_cookies_map[cookie_domain].add(std::move(cookie));
     }
 
     cookies_list_t cookies_t::get_inner(const string_t& domain,
                                         const string_t& path,
-                                        const bool is_ssl) {
+                                        const bool is_ssl) const {
         cookies_list_t cookies;
         cookies_list_t cookies_rm;
-        
+
         if (not m_cookies_map.count(domain))
             return {};
 
-        auto&& domain_cookies = m_cookies_map[domain];
+        auto& domain_cookies = m_cookies_map[domain];
 
-        for (auto&& cookie : domain_cookies) {
-            auto&& cookie_path =
+        for (const auto& cookie : domain_cookies) {
+            const auto& cookie_path =
                 cookie.path().empty()? cookie.origin_path() : cookie.path();
-            
+
             if (not is_path_matched(cookie_path, path))
                 continue;
 
             if (cookie.is_secure() and not is_ssl)
                 continue;
-                            
+
             if (is_cookie_expired(cookie))
                 cookies_rm.insert(cookie);
             else
                 cookies.insert(cookie);
         }
 
-        for (auto&& cookie : cookies_rm)
+        for (const auto& cookie : cookies_rm) {
             domain_cookies.erase(cookie);
+        }
 
         return cookies;
     }
 
     cookies_list_t cookies_t::get(const string_t& domain_,
                                   const string_t& path,
-                                  const bool is_ssl) {
+                                  const bool is_ssl) const {
         cookies_list_t cookies;
         string_t domain = tolower(domain_);
 
         for (;;) {
             for (auto&& cookie : get_inner(domain, path, is_ssl))
                 cookies.insert(cookie);
-            
+
             if (is_public_domain(domain))
                 break;
-            
+
             cut_head_and_dot(domain);
         }
-        
+
         return cookies;
     }
 
     string_t cookies_t::to_string() const {
         std::ostringstream out;
-        
+
         for (auto&& domain_cookies : m_cookies_map) {
             for (auto&& cookie : domain_cookies.second)
                 out << cookie << "\n";
             out << "\n";
         }
-        
+
         return out.str();
     }
-    
+
     void cookies_t::update(const cookies_t& cookies) {
         for (auto&& param : cookies.m_cookies_map)
             m_cookies_map[param.first] = param.second;
@@ -522,6 +523,6 @@ namespace crequests {
     cookie_t operator "" _cookie(const char* val, size_t) {
         return cookie_t::from_string(val);
     }
-    
-    
+
+
 } /* namespace crequests */
