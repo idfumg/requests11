@@ -49,7 +49,7 @@ namespace crequests {
 
     public:
         void prepare();
-        string_t make_request();
+        string_t make_request() const;
         bool is_ssl() const;
 
     public:

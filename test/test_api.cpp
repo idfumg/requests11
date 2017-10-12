@@ -19,6 +19,7 @@ TEST(Api, Default) {
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.redirect_count().value(), 0);
     EXPECT_EQ(response.redirects().get().size(), 0);
+
     const auto& headers = response.headers();
     EXPECT_EQ(headers.at("Content-Type"), "text/html; charset=UTF-8");
 
@@ -201,61 +202,64 @@ TEST(Api, Session) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    auto& session = service.new_session();
-    set_option(session, "127.0.0.1:8080/cookies", keep_alive_t{true}, gzip_t{false});
-    auto response = session.Get();
+    const auto& session = service.new_session(
+        "127.0.0.1:8080/cookies", keep_alive_t{true}, gzip_t{false});
 
-    EXPECT_EQ(response.http_major().value(), 1);
-    EXPECT_EQ(response.http_minor().value(), 1);
-    EXPECT_EQ(response.status_code().value(), 200);
-    EXPECT_EQ(response.status_message().value(), "OK");
-    EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
-    EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().get().size(), 0);
-    EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
-    EXPECT_EQ(response.request().make_request(),
-              "GET /cookies HTTP/1.1\r\n"
-              "Host: 127.0.0.1\r\n"
-              "Accept-Encoding: gzip, deflate\r\n"
-              "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
-              "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
-    EXPECT_EQ(response.request().cookies().to_string(), "");
-    EXPECT_EQ(response.cookies().to_string(),
-              "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
-              "cookie2\n\n");
+    {
+        const auto response = session.Get();
 
+        EXPECT_EQ(response.http_major().value(), 1);
+        EXPECT_EQ(response.http_minor().value(), 1);
+        EXPECT_EQ(response.status_code().value(), 200);
+        EXPECT_EQ(response.status_message().value(), "OK");
+        EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
+        EXPECT_EQ(response.redirect_count().value(), 0);
+        EXPECT_EQ(response.redirects().get().size(), 0);
+        EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
+        EXPECT_EQ(response.request().make_request(),
+                  "GET /cookies HTTP/1.1\r\n"
+                  "Host: 127.0.0.1\r\n"
+                  "Accept-Encoding: gzip, deflate\r\n"
+                  "Connection: keep-alive\r\n"
+                  "Accept: */*\r\n"
+                  "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
+        EXPECT_EQ(response.request().cookies().to_string(), "");
+        EXPECT_EQ(response.cookies().to_string(),
+                  "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
+                  "cookie2\n\n");
+    }
 
-    response = session.Get();
+    {
+        const auto response = session.Get();
 
-
-    EXPECT_EQ(response.http_major().value(), 1);
-    EXPECT_EQ(response.http_minor().value(), 1);
-    EXPECT_EQ(response.status_code().value(), 200);
-    EXPECT_EQ(response.status_message().value(), "OK");
-    EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
-    EXPECT_EQ(response.error().to_string(), "SUCCESS: success");
-    EXPECT_EQ(response.redirect_count().value(), 0);
-    EXPECT_EQ(response.redirects().get().size(), 0);
-    EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
-    EXPECT_EQ(response.request().make_request(),
-              "GET /cookies HTTP/1.1\r\n"
-              "Cookies: cookie1; cookie2; \r\n"
-              "Host: 127.0.0.1\r\n"
-              "Accept-Encoding: gzip, deflate\r\n"
-              "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
-              "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
-    EXPECT_EQ(response.request().cookies().to_string(),
-              "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
-              "cookie2\n\n");
-    EXPECT_EQ(response.cookies().to_string(),
-              "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
-              "cookie2\n\n");
+        EXPECT_EQ(response.http_major().value(), 1);
+        EXPECT_EQ(response.http_minor().value(), 1);
+        EXPECT_EQ(response.status_code().value(), 200);
+        EXPECT_EQ(response.status_message().value(), "OK");
+        EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
+        EXPECT_EQ(response.error().to_string(), "SUCCESS: success");
+        EXPECT_EQ(response.redirect_count().value(), 0);
+        EXPECT_EQ(response.redirects().get().size(), 0);
+        EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
+        EXPECT_EQ(response.request().make_request(),
+                  "GET /cookies HTTP/1.1\r\n"
+                  "Cookies: cookie1; cookie2; \r\n"
+                  "Host: 127.0.0.1\r\n"
+                  "Accept-Encoding: gzip, deflate\r\n"
+                  "Connection: keep-alive\r\n"
+                  "Accept: */*\r\n"
+                  "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
+        EXPECT_EQ(response.request().cookies().to_string(),
+                  "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
+                  "cookie2\n\n");
+        EXPECT_EQ(response.cookies().to_string(),
+                  "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
+                  "cookie2\n\n");
+    }
 
     server.stop();
     thread.join();

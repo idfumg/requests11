@@ -478,7 +478,7 @@ namespace crequests {
      ***************************************************************************/
 
 
-    string_t request_t::make_request() {
+    string_t request_t::make_request() const {
         assert(not m_method.empty());
         assert(not m_uri.path().empty());
         assert(not m_uri.domain().empty());
@@ -490,21 +490,24 @@ namespace crequests {
         if (not m_uri.query().empty())
             out << "?" + m_uri.query().value();
 
-        auto cookies =
+        const auto cookies =
             m_cookies.get(m_uri.domain().value(), m_uri.path().value());
-        auto headers_ = m_headers;
 
-        if (not cookies.empty())
+        auto headers_ = m_headers;
+        if (not cookies.empty()) {
             headers_.insert("Cookies", cookies.to_string());
+        }
 
         out << " " << "HTTP/1.1\r\n";
         out << headers_.to_string();
 
         if (not m_data.empty()) {
-            if (m_gzip)
+            if (m_gzip) {
                 out << compress(m_data.value());
-            else
+            }
+            else {
                 out << m_data;
+            }
         }
 
         return out.str();
