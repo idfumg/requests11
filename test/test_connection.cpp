@@ -232,8 +232,8 @@ TEST(ConnectionGood,  GetContentLengthWithBodyCallback) {
 
     service_t service;
     std::string result;
-    body_callback_t callback = [&result](const char* at, size_t length,
-                                         const crequests::error_t& e) {
+    const body_callback_t callback = [&result](const char* at, size_t length,
+                                               const crequests::error_t& e) {
         EXPECT_FALSE(e);
         result.append(at, length);
     };
@@ -253,8 +253,8 @@ TEST(ConnectionBad, ErrorThroughBodyCallback) {
     std::thread thread([&server](){server.run();});
 
     service_t service;
-    body_callback_t callback = [](const char* at, size_t length,
-                                  const crequests::error_t& e) {
+    const body_callback_t callback = [](const char* at, size_t length,
+                                        const crequests::error_t& e) {
         EXPECT_FALSE(at);
         EXPECT_EQ(length, 0);
         EXPECT_TRUE(e);
