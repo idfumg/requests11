@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 
 if [ ! -x build ]; then
     mkdir build
@@ -6,7 +6,7 @@ fi
 
 cd build
 
-cmake ..
+OPENSSL_ROOT_DIR=/usr/lib/ssl cmake ..
 make -j4
 
 if [ $? -eq 0 ]; then
