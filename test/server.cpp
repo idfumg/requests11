@@ -345,8 +345,6 @@ namespace crequests {
                 headers.insert("Set-Cookie", "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly");
                 headers.insert("Set-Cookie", "cookie2");
 
-                std::cout << __FUNCTION__ << ": headers: " << headers.to_string() << std::endl;
-
                 out << "HTTP/1.1 200 OK\r\n";
                 out << headers.to_string();
 

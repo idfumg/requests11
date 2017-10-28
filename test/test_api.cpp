@@ -178,8 +178,6 @@ TEST(Api, Cookies) {
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/cookies");
 
-    std::cout << __FUNCTION__ << response << std::endl;
-
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.cookies().to_string(),
