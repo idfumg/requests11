@@ -41,12 +41,12 @@ namespace crequests {
     }
 
     void params_t::update(const params_t& params) {
-        for (auto&& param : params)
+        for (const auto& param : params)
             this->operator[](param.first) = param.second;
     }
 
     std::ostream& operator<<(std::ostream& out, const params_t& params) {
-        for (auto&& param : params)
+        for (const auto& param : params)
             out << param.first << ": " << param.second << "\n";
 
         return out;
