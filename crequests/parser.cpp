@@ -9,7 +9,7 @@ namespace crequests {
 
         
         int cb_message_begin(http_parser* parser) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_message_begin)
                 data->on_message_begin();
 
@@ -17,7 +17,7 @@ namespace crequests {
         }
 
         int cb_url(http_parser* parser, const char* at, size_t length) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_url)
                 data->on_url(at, length);
             
@@ -25,7 +25,7 @@ namespace crequests {
         }
     
         int cb_status(http_parser* parser, const char* at, size_t length) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_status)
                 data->on_status(at,
                                 length,
@@ -37,7 +37,7 @@ namespace crequests {
         }
 
         int cb_header_field(http_parser* parser, const char* at, size_t length) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_header_field)
                 data->on_header_field(at, length);
 
@@ -45,7 +45,7 @@ namespace crequests {
         }
 
         int cb_header_value(http_parser* parser, const char* at, size_t length) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_header_value)
                 data->on_header_value(at, length);
 
@@ -53,7 +53,7 @@ namespace crequests {
         }
 
         int cb_headers_complete(http_parser* parser) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_headers_complete)
                 data->on_headers_complete(parser->content_length);
             
@@ -61,7 +61,7 @@ namespace crequests {
         }
 
         int cb_body(http_parser* parser, const char* at, size_t length) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_body)
                 data->on_body(at, length);
             
@@ -69,7 +69,7 @@ namespace crequests {
         }
 
         int cb_message_complete(http_parser* parser) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_message_complete)
                 data->on_message_complete();
             
@@ -77,7 +77,7 @@ namespace crequests {
         }
 
         int cb_chunk_header(http_parser* parser) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_chunk_header)
                 data->on_chunk_header(parser->content_length);
             
@@ -85,7 +85,7 @@ namespace crequests {
         }
 
         int cb_chunk_complete(http_parser* parser) {
-            auto data = static_cast<parser_t::data_t*>(parser->data);
+            const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_chunk_complete)
                 data->on_chunk_complete();
 
@@ -131,7 +131,7 @@ namespace crequests {
     }
 
     size_t parser_t::execute(const char* data_, size_t length) {
-        size_t nparsed = http_parser_execute(&parser, &settings, data_, length);
+        const size_t nparsed = http_parser_execute(&parser, &settings, data_, length);
         if (parser.http_errno != HPE_OK and parser.http_errno != HPE_PAUSED)
             return 0;
         return nparsed;
