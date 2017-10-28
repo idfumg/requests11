@@ -15,10 +15,10 @@ TEST(Request, PrepareDefault) {
     
     EXPECT_EQ(out.str(),
               "GET / HTTP/1.1\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
@@ -36,10 +36,10 @@ TEST(Request, PreparePost) {
     
     EXPECT_EQ(out.str(),
               "POST / HTTP/1.1\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
@@ -57,11 +57,11 @@ TEST(Request, PrepareGzip) {
     
     EXPECT_EQ(out.str(),
               "POST / HTTP/1.1\r\n"
-              "Content-Encoding: gzip\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Content-Encoding: gzip\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
@@ -80,10 +80,10 @@ TEST(Request, PrepareKeepAlive) {
     
     EXPECT_EQ(out.str(),
               "POST / HTTP/1.1\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: close\r\n"
-              "Accept: */*\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
@@ -102,11 +102,11 @@ TEST(Request, PrepareBasicAuthorization) {
     
     EXPECT_EQ(out.str(),
               "POST / HTTP/1.1\r\n"
-              "Authorization: Basic dXNlcjpwYXNzd2Q=\r\n"
-              "Host: google.com\r\n"
-              "Accept-Encoding: gzip, deflate\r\n"
-              "Connection: keep-alive\r\n"
               "Accept: */*\r\n"
+              "Accept-Encoding: gzip, deflate\r\n"
+              "Authorization: Basic dXNlcjpwYXNzd2Q=\r\n"
+              "Connection: keep-alive\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n"
@@ -126,11 +126,11 @@ TEST(Request, PrepareWithData) {
     
     EXPECT_EQ(out.str(),
               "POST / HTTP/1.1\r\n"
-              "Content-Length: 6\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Content-Length: 6\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n"
@@ -151,12 +151,12 @@ TEST(Request, PrepareWithGzippedData) {
     
     EXPECT_EQ(out.str().substr(0, 271),
               "POST / HTTP/1.1\r\n"
-              "Content-Length: 6\r\n"
-              "Content-Encoding: gzip\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Content-Encoding: gzip\r\n"
+              "Content-Length: 6\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n"
@@ -172,11 +172,11 @@ TEST(Request, UsingUserDefinedLiteral) {
 
     EXPECT_EQ(request.make_request(),
               "GET / HTTP/1.1\r\n"
-              "Content-Encoding: gzip\r\n"
-              "Host: google.com\r\n"
+              "Accept: */*\r\n"
               "Accept-Encoding: gzip, deflate\r\n"
               "Connection: keep-alive\r\n"
-              "Accept: */*\r\n"
+              "Content-Encoding: gzip\r\n"
+              "Host: google.com\r\n"
               "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/47.0.2526.106 Safari/537.36\r\n"

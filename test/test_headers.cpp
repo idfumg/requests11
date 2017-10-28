@@ -22,9 +22,9 @@ TEST(Headers, FromStringUsingUserDefinedLiteral) {
 
 TEST(Headers, ToString) {
     const auto headers =
-        headers_t {{"a", "1"}, {"b", "2"}, {"c", "3"}, {"d", "4"}};
+        headers_t {{"a", "1"}, {"d", "4"}, {"b", "2"}, {"c", "3"}};
 
-    EXPECT_EQ(headers.to_string(), "d: 4\r\nc: 3\r\nb: 2\r\na: 1\r\n\r\n");
+    EXPECT_EQ(headers.to_string(), "a: 1\r\nb: 2\r\nc: 3\r\nd: 4\r\n\r\n");
 }
 
 TEST(Headers, Update) {

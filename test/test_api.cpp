@@ -178,6 +178,8 @@ TEST(Api, Cookies) {
     service_t service;
     const auto response = Get(service, "127.0.0.1:8080/cookies");
 
+    std::cout << __FUNCTION__ << response << std::endl;
+
     EXPECT_FALSE(response.error());
     EXPECT_EQ(response.error().code_to_string(), "SUCCESS");
     EXPECT_EQ(response.cookies().to_string(),
@@ -218,13 +220,13 @@ TEST(Api, Session) {
         EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
         EXPECT_EQ(response.request().make_request(),
                   "GET /cookies HTTP/1.1\r\n"
-                  "Host: 127.0.0.1\r\n"
+                  "Accept: */*\r\n"
                   "Accept-Encoding: gzip, deflate\r\n"
                   "Connection: keep-alive\r\n"
-                  "Accept: */*\r\n"
+                  "Host: 127.0.0.1\r\n"                  
                   "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
         EXPECT_EQ(response.request().cookies().to_string(), "");
         EXPECT_EQ(response.cookies().to_string(),
                   "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
@@ -245,14 +247,14 @@ TEST(Api, Session) {
         EXPECT_EQ(response.headers().at("Content-Type"), "text/html; charset=UTF-8");
         EXPECT_EQ(response.request().make_request(),
                   "GET /cookies HTTP/1.1\r\n"
-                  "Cookies: cookie1; cookie2; \r\n"
-                  "Host: 127.0.0.1\r\n"
+                  "Accept: */*\r\n"
                   "Accept-Encoding: gzip, deflate\r\n"
                   "Connection: keep-alive\r\n"
-                  "Accept: */*\r\n"
+                  "Cookies: cookie1; cookie2; \r\n"
+                  "Host: 127.0.0.1\r\n"
                   "User-Agent: Mozilla/5.0 (X11; Linux x86_64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/47.0.2526.106 Safari/537.36\r\n\r\n");
         EXPECT_EQ(response.request().cookies().to_string(),
                   "cookie1; Expires=Wed, 09 Jun 2021 10:18:14 GMT; HttpOnly\n"
                   "cookie2\n\n");
