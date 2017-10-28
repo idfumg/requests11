@@ -191,14 +191,15 @@ namespace crequests {
 
     uri_t uri_t::from_string(const string_t& str_) {
         string_t str = str_;
-        bool schema_exists = str.substr(0, 4) != "http" and str.substr(0, 5) != "https";
+        const bool schema_exists =
+            str.substr(0, 4) != "http" and str.substr(0, 5) != "https";
         if (schema_exists)
             str = "http://" + str;
 
         uri_t uri;
 
         struct http_parser_url u;
-        auto rv = http_parser_parse_url(str.c_str(), str.size(), 0, &u);
+        const auto rv = http_parser_parse_url(str.c_str(), str.size(), 0, &u);
         if (rv != 0) {
             uri.is_valid(false);
         }
@@ -301,16 +302,16 @@ namespace crequests {
         };
 
         if (m_protocol.empty())
-            for (auto&& pair : tab)
+            for (const auto& pair : tab)
                 if (m_port.value() == pair.second)
                     m_protocol.value() = pair.first;
 
         if (m_port.empty())
-            for (auto&& pair : tab)
+            for (const auto& pair : tab)
                 if (m_protocol.value() == pair.first)
                     m_port.value() = pair.second;
 
-        for (auto&& pair : tab)
+        for (const auto& pair : tab)
             if (m_protocol.value() == pair.first and m_port.empty())
                 m_port.value() = pair.second;
 

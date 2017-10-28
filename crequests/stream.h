@@ -13,24 +13,26 @@
 namespace crequests {
 
     static inline shared_ptr_t<BIO> NewStrBIO(const string_t& str) {
-        BIO* bio = BIO_new_mem_buf(const_cast<char*>(str.data()), static_cast<int>(str.size()));
-        if (bio == NULL)
+        BIO* bio =
+            BIO_new_mem_buf(const_cast<char*>(str.data()), static_cast<int>(str.size()));
+        if (not bio)
             throw std::runtime_error("BIO_new_mem_buf failed");
         return shared_ptr_t<BIO>(bio, BIO_vfree);
     }
 
     static inline shared_ptr_t<X509> NewX509(const string_t& cert) {
-        auto cert_bio = NewStrBIO(cert);
+        const auto cert_bio = NewStrBIO(cert);
         X509* x509_cert = PEM_read_bio_X509(cert_bio.get(), NULL, NULL, NULL);
-        if (x509_cert == NULL)
+        if (not x509_cert)
             throw std::runtime_error("create new X509 cert failed");
         return shared_ptr_t<X509>(x509_cert, X509_free);
     }
 
     static inline shared_ptr_t<EVP_PKEY> NewEVP_PKEY(const string_t& pkey) {
-        auto pkey_bio = NewStrBIO(pkey);
-        EVP_PKEY* evp_pkey = ::PEM_read_bio_PrivateKey(pkey_bio.get(), NULL, NULL, NULL);
-        if (evp_pkey == NULL)
+        const auto pkey_bio = NewStrBIO(pkey);
+        EVP_PKEY* evp_pkey =
+            ::PEM_read_bio_PrivateKey(pkey_bio.get(), NULL, NULL, NULL);
+        if (not evp_pkey)
             throw std::runtime_error("create new private key failed");
         return shared_ptr_t<EVP_PKEY>(evp_pkey, EVP_PKEY_free);
     }
@@ -49,10 +51,10 @@ namespace crequests {
     static inline void UseCACerts(SSL_CTX* ctx,
                                   const vector_t<shared_ptr_t<X509> >& certs) {
         X509_STORE* x509_store = X509_STORE_new();
-        if (x509_store == NULL)
+        if (not x509_store)
             throw std::runtime_error("creating new X509 cert failed");
 
-        for (auto&& cert:  certs)
+        for (const auto& cert : certs)
             if (!X509_STORE_add_cert(x509_store, cert.get()))
                 throw std::runtime_error("add cert to X509 store failed");
 
@@ -103,7 +105,7 @@ namespace crequests {
             not verify_filename.empty())
             ctx.set_verify_mode(boost::asio::ssl::verify_peer);
 
-        auto socket = std::make_shared<ssl_socket_t>(service, ctx);
+        const auto socket = std::make_shared<ssl_socket_t>(service, ctx);
 
         if (not domain.empty() and always_verify_peer)
             socket->set_verify_callback(
@@ -115,13 +117,16 @@ namespace crequests {
     template <class ServiceT>
     static inline ssl_socket_ptr_t create_ssl_socket_server(ServiceT&& service)
     {
+        constexpr const char* SERVER_CERT_PATH = "cert/server.crt";
+        constexpr const char* SERVER_PRIVATE_KEY_PATH = "cert/server.key";
+        
         boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23_server);
         ctx.set_verify_mode(boost::asio::ssl::verify_none);
         ctx.set_default_verify_paths();
         ctx.set_options(boost::asio::ssl::context::default_workarounds);
 
-        ctx.use_certificate_chain_file("cert/server.crt");
-        ctx.use_private_key_file("cert/server.key", boost::asio::ssl::context::pem);
+        ctx.use_certificate_chain_file(SERVER_CERT_PATH);
+        ctx.use_private_key_file(SERVER_PRIVATE_KEY_PATH, boost::asio::ssl::context::pem);
 
         return std::make_shared<ssl_socket_t>(service, ctx);
     }
@@ -148,7 +153,7 @@ namespace crequests {
                     certs.push_back(NewX509(cert_.value()));
 
             if (request.is_ssl()) {
-                ssl_socket = create_ssl_socket_client(service,
+                ssl_socket = create_ssl_socket_client(std::forward<ServiceT>(service),
                                                       cert, key,
                                                       certs,
                                                       request.always_verify_peer(),
@@ -158,18 +163,18 @@ namespace crequests {
                                                       request.private_key_file(),
                                                       request.uri().domain());
             } else {
-                tcp_socket = create_tcp_socket(service);
+                tcp_socket = create_tcp_socket(std::forward<ServiceT>(service));
             }
 
             type = boost::asio::ssl::stream_base::client;
         }
 
         template <class ServiceT>
-        stream_t(ServiceT&& service, bool is_ssl) {
+        stream_t(ServiceT&& service, const bool is_ssl) {
             if (is_ssl)
-                ssl_socket = create_ssl_socket_server(service);
+                ssl_socket = create_ssl_socket_server(std::forward<ServiceT>(service));
             else
-                tcp_socket = create_tcp_socket(service);
+                tcp_socket = create_tcp_socket(std::forward<ServiceT>(service));
             type = boost::asio::ssl::stream_base::server;
         }
 
@@ -291,17 +296,17 @@ namespace crequests {
         template <class OptionT>
         void set_option(OptionT&& option) {
             if (tcp_socket and tcp_socket->is_open())
-                tcp_socket->set_option(option);
+                tcp_socket->set_option(std::forward<OptionT>(option));
             else if (ssl_socket and ssl_socket->lowest_layer().is_open())
-                ssl_socket->lowest_layer().set_option(option);
+                ssl_socket->lowest_layer().set_option(std::forward<OptionT>(option));
         }
 
         template <class OptionT>
         bool get_option(OptionT&& option) {
             if (tcp_socket and tcp_socket->is_open())
-                tcp_socket->get_option(option);
+                tcp_socket->get_option(std::forward<OptionT>(option));
             else if (ssl_socket and ssl_socket->lowest_layer().is_open())
-                ssl_socket->lowest_layer().get_option(option);
+                ssl_socket->lowest_layer().get_option(std::forward<OptionT>(option));
             
             return option.value();
         }
