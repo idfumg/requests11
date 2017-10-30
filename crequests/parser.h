@@ -8,15 +8,15 @@
 namespace crequests {
 
     
-    using cb_data_t = std::function<void(const char* at, size_t length)>;
+    using cb_data_t = std::function<void(const char* at, const size_t length)>;
     using cb_info_t = std::function<void()>;
-    using cb_chunk_header_t = std::function<void(size_t length)>;
+    using cb_chunk_header_t = std::function<void(const size_t length)>;
     using cb_status_t =
         std::function<void(const char* status,
-                           size_t length,
-                           unsigned short http_major,
-                           unsigned short http_minor,
-                           unsigned int status_code)>;
+                           const size_t length,
+                           const unsigned short http_major,
+                           const unsigned short http_minor,
+                           const unsigned int status_code)>;
 
     
     class parser_t {
@@ -44,7 +44,7 @@ namespace crequests {
         ~parser_t();
 
     public:
-        size_t execute(const char* data, size_t len);
+        size_t execute(const char* data, const size_t len);
         void bind_cb(const cb_type_t& type, cb_data_t fn);
         void bind_cb(const cb_type_t& type, cb_info_t fn);
         void bind_cb(cb_status_t fn);

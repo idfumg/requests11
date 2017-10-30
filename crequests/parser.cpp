@@ -16,7 +16,7 @@ namespace crequests {
             return 0;
         }
 
-        int cb_url(http_parser* parser, const char* at, size_t length) {
+        int cb_url(http_parser* parser, const char* at, const size_t length) {
             const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_url)
                 data->on_url(at, length);
@@ -24,7 +24,7 @@ namespace crequests {
             return 0;
         }
     
-        int cb_status(http_parser* parser, const char* at, size_t length) {
+        int cb_status(http_parser* parser, const char* at, const size_t length) {
             const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_status)
                 data->on_status(at,
@@ -36,7 +36,7 @@ namespace crequests {
             return 0;
         }
 
-        int cb_header_field(http_parser* parser, const char* at, size_t length) {
+        int cb_header_field(http_parser* parser, const char* at, const size_t length) {
             const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_header_field)
                 data->on_header_field(at, length);
@@ -44,7 +44,7 @@ namespace crequests {
             return 0;
         }
 
-        int cb_header_value(http_parser* parser, const char* at, size_t length) {
+        int cb_header_value(http_parser* parser, const char* at, const size_t length) {
             const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_header_value)
                 data->on_header_value(at, length);
@@ -60,7 +60,7 @@ namespace crequests {
             return 0;
         }
 
-        int cb_body(http_parser* parser, const char* at, size_t length) {
+        int cb_body(http_parser* parser, const char* at, const size_t length) {
             const auto data = static_cast<parser_t::data_t*>(parser->data);
             if (data->on_body)
                 data->on_body(at, length);
@@ -130,7 +130,7 @@ namespace crequests {
             http_parser_pause(&parser, 0);
     }
 
-    size_t parser_t::execute(const char* data_, size_t length) {
+    size_t parser_t::execute(const char* data_, const size_t length) {
         const size_t nparsed = http_parser_execute(&parser, &settings, data_, length);
         if (parser.http_errno != HPE_OK and parser.http_errno != HPE_PAUSED)
             return 0;
