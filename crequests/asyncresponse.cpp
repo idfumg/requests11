@@ -3,7 +3,7 @@
 namespace crequests {
 
 
-    struct asyncrequest_impl_t {
+    class asyncrequest_impl_t {
     public:
         asyncrequest_impl_t(const future_t<response_t>& future)
             : m_future{future}
