@@ -5,30 +5,30 @@ using namespace testing;
 using namespace crequests;
 
 TEST(Uri, Protocol) {
-    string_t url {"http://"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_TRUE(not uri.is_valid());
 }
 
 TEST(Uri, ProtocolWithoutSlashes) {
-    string_t url {"some_protocol:google.ru:80/"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"some_protocol:google.ru:80/"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_TRUE(not uri.is_valid());
 }
 
 TEST(Uri, Domain) {
-    string_t url {"google.com"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
 }
 
 TEST(Uri, ProtocolAndDomain) {
-    string_t url {"http://google.com"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -36,8 +36,8 @@ TEST(Uri, ProtocolAndDomain) {
 }
 
 TEST(Uri, DomainAndPort) {
-    string_t url {"google.com:80"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com:80"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com:80"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -45,8 +45,8 @@ TEST(Uri, DomainAndPort) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPort) {
-    string_t url {"http://google.com:80"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -55,8 +55,8 @@ TEST(Uri, ProtocolAndDomainAndPort) {
 }
 
 TEST(Uri, DomainAndPath) {
-    string_t url {"google.com/"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com/"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com/"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -64,8 +64,8 @@ TEST(Uri, DomainAndPath) {
 }
 
 TEST(Uri, DomainAndPortAndPath) {
-    string_t url {"google.com:80/"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com:80/"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com:80/"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -74,8 +74,8 @@ TEST(Uri, DomainAndPortAndPath) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPortAndPath) {
-    string_t url {"http://google.com:80/"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80/"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80/"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -85,8 +85,8 @@ TEST(Uri, ProtocolAndDomainAndPortAndPath) {
 }
 
 TEST(Uri, DomainAndPathAndFragment) {
-    string_t url {"google.com/#fragment"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com/#fragment"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com/#fragment"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -95,8 +95,8 @@ TEST(Uri, DomainAndPathAndFragment) {
 }
 
 TEST(Uri, DomainAndPortAndPathAndFragment) {
-    string_t url {"google.com:80/asd/#fragment"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com:80/asd/#fragment"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com:80/asd/#fragment"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -106,8 +106,8 @@ TEST(Uri, DomainAndPortAndPathAndFragment) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPortAndPathAndFragment) {
-    string_t url {"http://google.com:80/asd/#fragment"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80/asd/#fragment"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80/asd/#fragment"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -118,8 +118,8 @@ TEST(Uri, ProtocolAndDomainAndPortAndPathAndFragment) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPortAndPathAndFragmentAndQuery) {
-    string_t url {"http://google.com:80/asd/?a=1&b=2#fragment"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80/asd/?a=1&b=2#fragment"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80/asd/?a=1&b=2#fragment"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -131,8 +131,8 @@ TEST(Uri, ProtocolAndDomainAndPortAndPathAndFragmentAndQuery) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPortAndPathAndQuery) {
-    string_t url {"http://google.com:80/asd/?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80/asd/?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80/asd/?a=1&b=2"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -143,8 +143,8 @@ TEST(Uri, ProtocolAndDomainAndPortAndPathAndQuery) {
 }
 
 TEST(Uri, ProtocolAndDomainAndPortAndQuery) {
-    string_t url {"http://google.com:80?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com:80?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com:80?a=1&b=2"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -154,8 +154,8 @@ TEST(Uri, ProtocolAndDomainAndPortAndQuery) {
 }
 
 TEST(Uri, ProtocolAndDomainAndQuery) {
-    string_t url {"http://google.com?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"http://google.com?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "http://google.com?a=1&b=2"_url);
     EXPECT_EQ(uri.protocol(), "http"_protocol);
@@ -164,8 +164,8 @@ TEST(Uri, ProtocolAndDomainAndQuery) {
 }
 
 TEST(Uri, DomainAndQuery) {
-    string_t url {"google.com?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com?a=1&b=2"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -173,8 +173,8 @@ TEST(Uri, DomainAndQuery) {
 }
 
 TEST(Uri, DomainAndPortAndQuery) {
-    string_t url {"google.com:80?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com:80?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com:80?a=1&b=2"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -183,8 +183,8 @@ TEST(Uri, DomainAndPortAndQuery) {
 }
 
 TEST(Uri, DomainAndPathAndQuery) {
-    string_t url {"google.com/?a=1&b=2"};
-    auto uri = uri_t::from_string(url);
+    const string_t url {"google.com/?a=1&b=2"};
+    const auto uri = uri_t::from_string(url);
 
     EXPECT_EQ(uri.url(), "google.com/?a=1&b=2"_url);
     EXPECT_EQ(uri.domain(), "google.com"_domain);
@@ -206,7 +206,7 @@ TEST(Uri, UsingUserDefinedLiteral) {
 }
 
 TEST(UriPrepare, ParametersFromUrlOverrideCurrent) {
-    string_t url {"http://google.com:80/asd/?a=1&b=2#fragment"};
+    const string_t url {"http://google.com:80/asd/?a=1&b=2#fragment"};
     auto uri = uri_t::from_string(url);
 
     uri.protocol("https"_protocol);
@@ -242,7 +242,7 @@ TEST(UriPrepare, ParamsOverrideAndAppendedToQueryParams) {
 }
 
 TEST(UriPrepare, DefaultHttpProtocolAndPort) {
-    string_t url {"google.com"};
+    const string_t url {"google.com"};
     auto uri = uri_t::from_string(url);
 
     uri.prepare();
@@ -253,7 +253,7 @@ TEST(UriPrepare, DefaultHttpProtocolAndPort) {
 }
 
 TEST(UriPrepare, DefaultSslProtocolFromSslPort) {
-    string_t url {"google.com"};
+    const string_t url {"google.com"};
     auto uri = uri_t::from_string(url);
 
     uri.port("443"_port);
@@ -265,7 +265,7 @@ TEST(UriPrepare, DefaultSslProtocolFromSslPort) {
 }
 
 TEST(UriPrepare, DefaultSslPortFromSslProtocol) {
-    string_t url {"google.com"};
+    const string_t url {"google.com"};
     auto uri = uri_t::from_string(url);
 
     uri.protocol("https"_protocol);
@@ -277,7 +277,7 @@ TEST(UriPrepare, DefaultSslPortFromSslProtocol) {
 }
 
 TEST(UriPrepare, QueryWithSlashes) {
-    string_t url {"127.0.0.1/response-headers?Content-Type=text/plain"};
+    const string_t url {"127.0.0.1/response-headers?Content-Type=text/plain"};
     auto uri = uri_t::from_string(url);
     uri.prepare();
 
