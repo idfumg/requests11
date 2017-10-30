@@ -339,6 +339,11 @@ namespace crequests {
         parser->bind_cb(parser_t::CHUNK_HEADER, chunk_header_fn);
     }
 
+    /*
+      Function which gives us an object for the future response.
+      This response can be obtained when the current connection
+      is done (good response or an error on any step, does not matter).
+    */
     future_t<response_t> conn_impl_t::get() const {
         return future;
     }

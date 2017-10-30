@@ -95,10 +95,10 @@ namespace crequests {
         if (ec)
             return;
 
-        auto it = sessions.begin();
-        while (it != sessions.end()) {
+        auto it = sessions.cbegin();
+        while (it != sessions.cend()) {
             if (it->is_expired()) {
-                auto it_to_erase = it;
+                const auto it_to_erase = it;
                 it++;
                 sessions.erase(it_to_erase);
             }
