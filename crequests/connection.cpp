@@ -561,7 +561,7 @@ namespace crequests {
             on_read_content_length(ec, length);
         };
         set_state(error_code_t::READ_CONTENT_LENGTH);
-        size_t n = response_buf.size() > content_length
+        const size_t n = response_buf.size() > content_length
             ? 0
             : content_length - response_buf.size();
         stream.async_read(response_buf,
@@ -588,7 +588,7 @@ namespace crequests {
     void conn_impl_t::read_chunk_header() {
         set_state(error_code_t::READ_CHUNK_HEADER);
 
-        auto crlf = peek_crlf(response_buf);
+        const auto crlf = peek_crlf(response_buf);
         if (crlf) {
             on_read_chunk_header(ec_t(), 0);
             return;
