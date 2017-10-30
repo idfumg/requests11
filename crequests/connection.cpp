@@ -42,9 +42,10 @@ namespace crequests {
         }
 
         template <class StreamBufT>
-        string_t read_buffer(StreamBufT& response_buf, std::size_t length) {
+        string_t read_buffer(StreamBufT& response_buf, const std::size_t length) {
             if (length == 0)
                 return "";
+
             vector_t<char> buf(length);
             response_buf.sgetn(&buf[0], length);
 
@@ -272,10 +273,10 @@ namespace crequests {
         headers = ""_headers;
 
         const auto status_fn = [this](const char* at,
-                                      size_t length,
-                                      unsigned short major,
-                                      unsigned short minor,
-                                      unsigned int code)
+                                      const size_t length,
+                                      const unsigned short major,
+                                      const unsigned short minor,
+                                      const unsigned int code)
         {
             response.http_major(http_major_t{major});
             response.http_minor(http_minor_t{minor});
@@ -286,7 +287,7 @@ namespace crequests {
 
         parser->bind_cb(status_fn);
 
-        const auto header_field_fn = [this](const char* at, size_t length)
+        const auto header_field_fn = [this](const char* at, const size_t length)
         {
             header_field.reserve(length);
             header_field.assign(at, length);
@@ -294,7 +295,7 @@ namespace crequests {
 
         parser->bind_cb(parser_t::HEADER_FIELD, header_field_fn);
 
-        const auto header_value_fn = [this](const char* at, size_t length)
+        const auto header_value_fn = [this](const char* at, const size_t length)
         {
             string_t header_value(at, length);
             if (tolower(header_field) == "set-cookie") {
@@ -309,7 +310,7 @@ namespace crequests {
 
         parser->bind_cb(parser_t::HEADER_VALUE, header_value_fn);
 
-        const auto headers_complete_fn = [this](ssize_t content_len)
+        const auto headers_complete_fn = [this](const ssize_t content_len)
         {
             content_length = content_len;
             response.headers(std::move(headers));
@@ -318,7 +319,7 @@ namespace crequests {
 
         parser->bind_cb(parser_t::HEADERS_COMPLETE, headers_complete_fn);
 
-        const auto body_fn = [this](const char* at, size_t length)
+        const auto body_fn = [this](const char* at, const size_t length)
         {
             if (response.request().body_callback())
                 response.request().body_callback()(at, length, error_t{});
@@ -329,7 +330,7 @@ namespace crequests {
 
         parser->bind_cb(parser_t::BODY, body_fn);
 
-        const auto chunk_header_fn = [this](size_t length)
+        const auto chunk_header_fn = [this](const size_t length)
         {
             content_length = length;
             parser->pause();
@@ -407,7 +408,7 @@ namespace crequests {
         };
         const auto self = shared_from_this();
         const auto callback = [this, self](const ec_t& ec,
-                                     const resolver_t::iterator& endpoint) {
+                                           const resolver_t::iterator& endpoint) {
             on_resolve(ec, endpoint);
         };
         set_state(error_code_t::RESOLVE);
@@ -427,7 +428,7 @@ namespace crequests {
     void conn_impl_t::connect(const resolver_t::iterator& endpoint) {
         const auto self = shared_from_this();
         const auto callback = [this, self](const ec_t& ec,
-                                     const resolver_t::iterator& endpoint_) {
+                                           const resolver_t::iterator& endpoint_) {
             on_connect(ec, endpoint_);
         };
         set_state(error_code_t::CONNECT);
@@ -634,7 +635,7 @@ namespace crequests {
 
         const auto self = shared_from_this();
         const auto callback = [this, self](const ec_t& ec,
-                                     const std::size_t length) {
+                                           const std::size_t length) {
             on_read_chunk_data(ec, length);
         };
 
