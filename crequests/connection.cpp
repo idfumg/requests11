@@ -113,41 +113,170 @@ namespace crequests {
 
     class conn_impl_t : public std::enable_shared_from_this<conn_impl_t> {
     public:
+        /*
+          For creating a new connection you need aservice instance
+          which responsible for async handling asio jobs and a
+          request, which is needed for an instantiation of response object.
+         */
         conn_impl_t(service_t& service,
                     const request_t& request);
+        
+        /*
+          This constructor is used for reuse created early connections.
+          For example, if you enable keep alive and current connection was
+          closed unexpectedly. This allow you to use connection settings for
+          new connection.
+         */
         conn_impl_t(service_t& service,
                     const request_t& request,
                     const connection_t& connection);
+        
         conn_impl_t(const conn_impl_t& conn_impl) = delete;
         conn_impl_t& operator=(const conn_impl_t& conn_impl) = delete;
         ~conn_impl_t();
 
     public:
+        /*
+          This function starts an asynchronous connection.
+          This connection will ends up in a background process.
+        */
         void start();
+
+        /*
+          This function stops current and starts a new asynchronous connection.
+          This connection will ends up in a background process.
+        */
         void restart();
+        
+        /*
+          Function which gives us an object for the future response.
+          This response can be obtained when the current connection
+          is done (good response or an error on any step, does not matter).
+        */
         future_t<response_t> get() const;
+
+        /*
+          This function say us that the current connection is expired.
+          This means the current connection ends up + waited dispose
+          timeout and removed and no longer live. You must fetch response
+          before this timeout expired.
+        */
         bool is_expired() const;
 
     private:
+        /*
+          This functions starts resolving process.
+          This process try to understand ip address of the
+          destination domain name.
+         */
         void resolve();
+
+        /*
+          This function starts when resolving process ends up
+          and give us an endpoint of destination.
+          The process may ends up with an error.
+         */
         void on_resolve(const ec_t& ec,
                         const resolver_iterator_t& endpoint);
+
+        /*
+          This function need for start a connection process
+          to the destination address.
+         */
         void connect(const resolver_t::iterator& endpoint);
+
+        /*
+          This function starts when connection complete.
+          The process may ends up with an error.
+         */
         void on_connect(const ec_t& ec,
                         const resolver_iterator_t& endpoint);
+
+        /*
+          This function starts if SSL enabled after connect and do
+          handshake process of the ssl protocol using OpenSSL library.
+         */
         void handshake();
+
+        /*
+          This function starts when ssl connection complete.
+          The process may ends up with an error.
+         */
         void on_handshake(const ec_t& ec);
+
+        /*
+          This function try to write HTTP request data (such as
+          method, uri, params, headers, cookies, post data body)
+          to the opened socket connection after connect (or
+          handshake if SSL is enabled).
+         */
         void write();
+
+        /*
+          This function starts when writing process is done.
+          The process may ends up with an error.
+         */
         void on_write(const ec_t& ec, const std::size_t&);
+
+        /*
+          This function starts after writing process and trying to
+          read status of the incoming HTTP response from remote
+          server.
+         */
         void read_status();
+
+        /*
+          This function starts when read status process is done.
+          The process may ends up with an error.
+         */
         void on_read_status(const ec_t& ec, const std::size_t&);
+
+        /*
+          This function starts after read status process and trying to
+          read HTTP headers of the remote server response body.
+         */
         void read_headers();
+
+        /*
+          This function starts when headers reading is done.
+          The process may ends up with an error.
+         */
         void on_read_headers(const ec_t& ec, const std::size_t&);
+
+        /*
+          This function is responsible for reading content of the remote
+          server response. Content can be readed in several ways.
+          It's can be content length enabled in headers. So we are reading
+          precise length of the body.
+          Or it can be chunk encoding response. It is a response which remote
+          server send to us part by part of fixed size.
+          In other way we must use fallback which read body data until it is an end.
+         */
         void read_content();
+
+        /*
+          This fuction read body of fixed size according to content length in headers.
+         */
         void read_content_length();
+
+        /*
+          This function starts when reading body is done.
+          The process may ends up with an error.
+         */
         void on_read_content_length(const ec_t& ec,
                                     const std::size_t length);
+
+        /*
+          This function read header of chunk encoding protocol.
+          This header contains length of the next data after it.
+         */
         void read_chunk_header();
+
+        /*
+          This function reads chunk data of the chunk encoding protocol.
+          If remote server has another data for us then header-data process
+          will repeat.
+         */
         void read_chunk_data();
         void on_read_chunk_header(const ec_t& ec,
                                   const std::size_t);
@@ -583,7 +712,7 @@ namespace crequests {
         else {
             raw.value().reserve(content_length);
             if (not execute_parser()) {
-                set_error(error_code_t::READ_CONTENT_LENGTH_ERROR,"bad contentlen");
+                set_error(error_code_t::READ_CONTENT_LENGTH_ERROR, "bad content length");
                 return;
             }
             set_success();

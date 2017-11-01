@@ -33,7 +33,7 @@ namespace crequests {
         /*
           This function starts an asynchronous connection.
           This connection will ends up in a background process.
-         */
+        */
         void start();
 
         /*
@@ -41,7 +41,7 @@ namespace crequests {
           This means the current connection ends up + waited dispose
           timeout and removed and no longer live. You must fetch response
           before this timeout expired.
-         */
+        */
         bool is_expired() const;
 
     private:
