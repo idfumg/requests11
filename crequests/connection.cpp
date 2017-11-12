@@ -278,27 +278,97 @@ namespace crequests {
           will repeat.
          */
         void read_chunk_data();
+        
+        /*
+          This function starts when reading chunk header is done.
+          The process may ends up with an error.
+         */
         void on_read_chunk_header(const ec_t& ec,
                                   const std::size_t);
+
+        /*
+          This function starts when reading chunk data is done.
+          The process may ends up with an error.
+         */
         void on_read_chunk_data(const ec_t& ec,
                                 const std::size_t);
+
+        /*
+          If it is not exists content length or chunk data we try to read
+          remote server response until EOF in the socket.
+         */
         void read_until_eof();
+
+        /*
+          This function starts when reading some data portion from socket is done.
+          The process may ends up with an error.
+         */
         void on_read_until_eof(const ec_t& ec, const std::size_t length);
+
+        /*
+          This function always setup timeout of connection.
+          This timeout is set in request data.
+         */
         void setup_timeout();
+
+        /*
+          This function starts when time is out and set state accordingly.
+         */
         void on_timeout(const ec_t& ec);
+
+        /*
+          This functions setup timeout for final response (with an error or not).
+          When this timeout is expired response state will be expired and this
+          connection will be desctructed because nobody is needed for it.
+         */
         void setup_dispose_timer();
+
+        /*
+          No one obtain this response so it is can be destructed.
+         */
         void on_dispose_timer(const ec_t& ec);
+
+        /*
+          This function called when HTTP response code say us the url was moved.
+          If redirect function is set up mechanism will do redirects.
+          This redirects can be configured by redirects count in request settings.
+         */
         void perform_redirect();
+
+        /*
+          Functions for working with states of connection mechanism.
+         */
         void set_error(const error_code_t& new_state, const string_t& msg);
         void set_error(const error_code_t& new_state, const ec_t& ec);
         void set_success();
         void set_timeout();
         void set_dispose();
         void set_state(const error_code_t& state_);
-        void end();
-        bool is_reused() const;
         bool in_final_state() const;
+
+        /*
+          This function called when we want to canceland close all operations of
+          all connection objects.
+         */
+        void end();
+
+        /*
+          This function returns true if this connection reuse previous connection.
+          This behaviour can be done when keep-alive is enabled and we want to
+          reconnect to server with existing settings of inital connection.
+         */
+        bool is_reused() const;
+
+        /*
+          Set up all neccessary parameters and callbacks for http parser.
+         */
         void prepare_parser();
+
+        /*
+          Start parser which will consume some data read from socket and do parsing
+          of http response or part of http response.
+          Can be called several times due to obtain remote server data from socket.
+         */
         bool execute_parser();
 
     public:
